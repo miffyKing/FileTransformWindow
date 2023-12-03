@@ -117,7 +117,7 @@ namespace checkFileContent
                     Thread.Sleep(1000);
                     // After sleeping, delete the file (if that's your requirement)
                     try
-                    {
+                    { 
 
                         if (transformFunction(filePath, threadIndex) == true)
                         {
