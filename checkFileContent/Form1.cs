@@ -117,7 +117,9 @@ namespace checkFileContent
                     Thread.Sleep(1000);
                     // After sleeping, delete the file (if that's your requirement)
                     try
-                    { 
+                    {
+                        //originalpath 에 같은 파일ㅇ명 있으면 _ 추가하는 로직 작성
+                        string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(filePath) + ".txt");
 
                         if (checkTransformFunction(filePath, threadIndex) == true)
                         {
@@ -209,6 +211,8 @@ namespace checkFileContent
 
         bool checkExtension(string file, int threadIndex)
         {
+            string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
+
             string extension = Path.GetExtension(file);
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
             string transformedFileName = "";
@@ -216,21 +220,23 @@ namespace checkFileContent
 
             if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
             {
-               /* transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".atxt");
-                if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
-                {
-                    File.Copy(file, transformedFileName);
-                    //fileCounts[threadIndex].SuccessCount++;
-                }*/
+                /* transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".atxt");
+                 if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
+                 {
+                     File.Copy(file, transformedFileName);
+                     //fileCounts[threadIndex].SuccessCount++;
+                 }*/
+                WriteLog(logFilePath, "Extension check passed for .abin");
             }
             else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
             {
-               /* transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".abin");
-                if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
-                {
-                    File.Copy(file, transformedFileName);
-                    //fileCounts[threadIndex].SuccessCount++;
-                }*/
+                /* transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".abin");
+                 if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
+                 {
+                     File.Copy(file, transformedFileName);
+                     //fileCounts[threadIndex].SuccessCount++;
+                 }*/
+                WriteLog(logFilePath, "Extension check passed for .abin");
             }
             else
             {
@@ -277,6 +283,16 @@ namespace checkFileContent
             }
             return true;
         }
+
+
+        private void WriteLog(string filePath, string message)
+        {
+            using (StreamWriter sw = new StreamWriter(filePath, true)) // true는 파일에 내용을 추가하는 것을 의미합니다.
+            {
+                sw.WriteLine(DateTime.Now + ": " + message);
+            }
+        }
+
 
         private void UpdateThreadLabel(int threadIndex, string text)
         {
