@@ -75,12 +75,12 @@ namespace checkFileContent
             for (int i = 0; i < 3; i++)
             {
                 threadLabels[i] = new Label();
-                threadLabels[i].Location = new System.Drawing.Point(10, 10 + (i * 20));
+                threadLabels[i].Location = new System.Drawing.Point(100, 50 + (i * 20));
                 threadLabels[i].Size = new System.Drawing.Size(200, 15);
                 this.Controls.Add(threadLabels[i]);
 
                 fileCountLabels[i] = new Label();
-                fileCountLabels[i].Location = new System.Drawing.Point(220, 10 + (i * 20));
+                fileCountLabels[i].Location = new System.Drawing.Point(350, 50 + (i * 20));
                 fileCountLabels[i].Size = new System.Drawing.Size(200, 15);
                 fileCountLabels[i].Text = "Count: 0";
 
@@ -120,8 +120,8 @@ namespace checkFileContent
                         string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(filePath) + ".txt");
                         WriteLog(logFilePath, "Thread index :" + threadIndex + "Starts transrform");
 
-                        
-                        
+                        string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(filePath));
+
                         if (checkTransformFunction(filePath, threadIndex) == true)
                         {
                             fileCounts[threadIndex].SuccessCount++;
@@ -134,10 +134,13 @@ namespace checkFileContent
                             string errorMessage = "File failed to transform, move to Error log folder";
                             WriteLog(logFilePath, errorMessage);
                             string errorLogPath = Path.Combine("..\\DATAS\\log\\errorLog\\", "ERROR_" + Path.GetFileName(logFilePath));
+                            
                             File.Move(logFilePath, errorLogPath);
+                            
                         }
 
-
+                        Console.Write("before move file to originla folder" + filePath);
+                        File.Move(filePath, originalFilePath);
                         UpdateThreadLabel(threadIndex, $"Thread {threadIndex} deleted {Path.GetFileName(filePath)}");
                         Thread.Sleep(1000);
                     }
@@ -161,6 +164,45 @@ namespace checkFileContent
 
         void transformFile(string file, int threadIndex)
         {
+            Console.Write("Processing File: " + file + "\n");
+            string extension = Path.GetExtension(file);
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
+            string transformedFileName = "";
+            string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
+            byte[] fileData = File.ReadAllBytes(file);
+            try
+            {
+                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                {
+                    transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".atxt");
+                    if (!File.Exists(transformedFileName))
+                    {
+                        Console.Write("no duplicate file name in transform area\n");
+                        File.WriteAllText(transformedFileName, Encoding.Default.GetString(fileData));
+
+                    }
+                }
+                else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                {
+                    transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".abin");
+                    if (!File.Exists(transformedFileName))
+                    {
+                        Console.Write("no duplicate file name in transform area\n");
+                        File.WriteAllBytes(transformedFileName, fileData);
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in transformFile: " + ex.Message);
+                // 오류 발생 시 함수를 종료하여 후속 단계로 진행하지 않음
+                return;
+            }
+        }
+
+        /*void transformFile(string file, int threadIndex)
+        {
 
             Console.Write("WHY NOT COMIPNG HERE\n");
             string extension = Path.GetExtension(file);
@@ -173,6 +215,7 @@ namespace checkFileContent
                 transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".atxt");
                 if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
                 {
+                    Console.Write("no duplicate file name in transform aresa");
                     File.Copy(file, transformedFileName);
                 }
             }
@@ -181,11 +224,14 @@ namespace checkFileContent
                 transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".abin");
                 if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
                 {
+                    Console.Write("no duplicate file name in transform aresa");
                     File.Copy(file, transformedFileName);
                 }
             }
             File.Move(file, originalFilePath);
-        }
+        }*/
+
+
 
         bool checkTransformFunction(string file, int threadIndex)
         {
