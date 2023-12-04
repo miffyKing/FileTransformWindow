@@ -32,7 +32,6 @@ namespace checkFileContent
 
 
         private bool isRunning = true; // 스레드 실행 제어를 위한 플래그
-        //private int[] fileCounts = new int[3]; // 각 스레드의 파일 처리 개수를 저장할 배열
         private FileProcessCount[] fileCounts = new FileProcessCount[3];
 
 
@@ -60,7 +59,7 @@ namespace checkFileContent
         {
             watcher = new FileSystemWatcher();
             watcher.Path = Path.GetFullPath(@"..\\DATAS\\inputRoute");
-            watcher.Filter = "*.*"; // Set the file types you want to monitor
+            watcher.Filter = "*.*";
             watcher.Created += OnCreated;
             watcher.EnableRaisingEvents = true;
         }
@@ -106,38 +105,34 @@ namespace checkFileContent
             {
                 if (fileList.TryDequeue(out string filePath))
                 {
-                    //fileCounts[threadIndex]++;
-
                     UpdateThreadLabel(threadIndex, $"Processing {Path.GetFileName(filePath)}");
                     UpdateFileCountLabel(threadIndex);
-                    // Add file processing logic here, e.g., move file to another folder
 
-                    Thread.Sleep(5000); // Sleep for 5 seconds after
+                    Thread.Sleep(5000);
                     Console.WriteLine($"Thread {threadIndex} is deleting file: {Path.GetFileName(filePath)}");
                     Thread.Sleep(1000);
-                    // After sleeping, delete the file (if that's your requirement)
                     try
                     {
                         //originalpath 에 같은 파일ㅇ명 있으면 _ 추가하는 로직 작성
                         string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(filePath) + ".txt");
+                        WriteLog(logFilePath, "Thread index :" + threadIndex + "Starts transrform");
+
+                        //original 폴더에서 겹치는 파일명이 있는지 확인하고, _ 를 추가하는 로직
 
                         if (checkTransformFunction(filePath, threadIndex) == true)
                         {
                             fileCounts[threadIndex].SuccessCount++;
                             UpdateFileCountLabel(threadIndex);  // 이거 변환프로세스 따라 값 바꿔야함
-
                             transformFile(filePath, threadIndex);
-                          
-        
                             //실제 파일 변환하는 로직 checkExtension 에 주석처리 되어 있는거 여기서 구현해야함. transformFile();
                         }
-             /*           else
+                        else
                         {
-                            fileCounts[threadIndex].FailureCount++;
-                            UpdateFileCountLabel(threadIndex);
-                        }*/
-
-                        //fileCounts[threadIndex].SuccessCount++;
+                            string errorMessage = "File failed to transform, move to Error log folder";
+                            WriteLog(logFilePath, errorMessage);
+                            string errorLogPath = Path.Combine("..\\DATAS\\log\\errorLog\\", "ERROR_" + Path.GetFileName(logFilePath));
+                            File.Move(logFilePath, errorLogPath);
+                        }
 
 
                         UpdateThreadLabel(threadIndex, $"Thread {threadIndex} deleted {Path.GetFileName(filePath)}");
@@ -156,7 +151,7 @@ namespace checkFileContent
                 { // 대기 중에 중단 신호를 확인
                     if (!isRunning)
                         break;
-                    Thread.Sleep(1000); // Sleep for a short time before checking the queue again
+                    Thread.Sleep(1000);
                 }
             }
         }
@@ -176,7 +171,6 @@ namespace checkFileContent
                 if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
                 {
                     File.Copy(file, transformedFileName);
-                    //fileCounts[threadIndex].SuccessCount++;
                 }
             }
             else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
@@ -185,7 +179,6 @@ namespace checkFileContent
                 if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
                 {
                     File.Copy(file, transformedFileName);
-                    //fileCounts[threadIndex].SuccessCount++;
                 }
             }
             File.Move(file, originalFilePath);
@@ -200,12 +193,6 @@ namespace checkFileContent
                 return false;
             if (checkFileName(file, threadIndex) == false)
                 return false;
-           /* if (checkContent(file, threadIndex) == true)
-                return false;*/
-                
-            
-
-            
             return true;
         }
 
@@ -214,33 +201,20 @@ namespace checkFileContent
             string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
 
             string extension = Path.GetExtension(file);
-            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
-            string transformedFileName = "";
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
 
             if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
             {
-                /* transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".atxt");
-                 if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
-                 {
-                     File.Copy(file, transformedFileName);
-                     //fileCounts[threadIndex].SuccessCount++;
-                 }*/
                 WriteLog(logFilePath, "Extension check passed for .abin");
             }
             else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
             {
-                /* transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".abin");
-                 if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
-                 {
-                     File.Copy(file, transformedFileName);
-                     //fileCounts[threadIndex].SuccessCount++;
-                 }*/
                 WriteLog(logFilePath, "Extension check passed for .abin");
             }
             else
             {
                 fileCounts[threadIndex].FailureCount++;
+                WriteLog(logFilePath, "Extension check Failed for filename" + file);
                 UpdateFileCountLabel(threadIndex);
                 File.Move(file, originalFilePath);
                 return false;
@@ -250,6 +224,7 @@ namespace checkFileContent
 
         bool checkFileName(string file, int threadIndex)
         {
+            string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
             string fileName = Path.GetFileName(file);
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", fileName);
 
@@ -257,12 +232,12 @@ namespace checkFileContent
             {
                 fileCounts[threadIndex].FailureCount++;
                 Console.WriteLine($"File name error, transformation failed: {fileName}");
-
                 File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
-
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
+            WriteLog(logFilePath, "File Name check PASSED for .abin");
+
             return true;
         }
 
@@ -270,12 +245,11 @@ namespace checkFileContent
         bool checkContent(string file, int threadIndex)
         {
             string extension = Path.GetExtension(file);
-            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
-            string transformedFileName = "";
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
 
             if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
             {
+
             }
             else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
             {
@@ -287,7 +261,7 @@ namespace checkFileContent
 
         private void WriteLog(string filePath, string message)
         {
-            using (StreamWriter sw = new StreamWriter(filePath, true)) // true는 파일에 내용을 추가하는 것을 의미합니다.
+            using (StreamWriter sw = new StreamWriter(filePath, true))
             {
                 sw.WriteLine(DateTime.Now + ": " + message);
             }
@@ -340,7 +314,8 @@ namespace checkFileContent
                     "..\\DATAS\\original\\",
                     "..\\DATAS\\transformed\\",
                     "..\\DATAS\\inputRoute\\",
-                    "..\\DATAS\\log\\"
+                    "..\\DATAS\\log\\",
+                    "..\\DATAS\\log\\errorLog"
                 };
 
                 foreach (string folder in folders)
@@ -348,7 +323,7 @@ namespace checkFileContent
                     // 이미 폴더가 존재한다면 삭제
                     if (Directory.Exists(folder))
                     {
-                        Directory.Delete(folder, true); // true는 폴더 내 모든 파일 및 하위 폴더를 삭제합니다.
+                        Directory.Delete(folder, true); // true 폴더 내 모든 파일 및 하위 폴더 삭제
                     }
                     Directory.CreateDirectory(folder);
                 }
