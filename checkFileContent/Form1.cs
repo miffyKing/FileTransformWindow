@@ -114,11 +114,14 @@ namespace checkFileContent
                     try
                     {
                         //originalpath 에 같은 파일ㅇ명 있으면 _ 추가하는 로직 작성
+                        //checkDupFineName(filePath, threadIndex);
+                        // 파일명 바뀌었음을 로그파일에 적고싶은데 어떻게 해야할까 - 그냥 flag 달자.
+
                         string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(filePath) + ".txt");
                         WriteLog(logFilePath, "Thread index :" + threadIndex + "Starts transrform");
 
-                        //original 폴더에서 겹치는 파일명이 있는지 확인하고, _ 를 추가하는 로직
-
+                        
+                        
                         if (checkTransformFunction(filePath, threadIndex) == true)
                         {
                             fileCounts[threadIndex].SuccessCount++;
