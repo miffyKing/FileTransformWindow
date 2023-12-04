@@ -119,18 +119,21 @@ namespace checkFileContent
                     try
                     { 
 
-                        if (transformFunction(filePath, threadIndex) == true)
+                        if (checkTransformFunction(filePath, threadIndex) == true)
                         {
                             fileCounts[threadIndex].SuccessCount++;
                             UpdateFileCountLabel(threadIndex);  // 이거 변환프로세스 따라 값 바꿔야함
 
+                            transformFile(filePath, threadIndex);
+                          
+        
                             //실제 파일 변환하는 로직 checkExtension 에 주석처리 되어 있는거 여기서 구현해야함. transformFile();
                         }
-                        else
+             /*           else
                         {
                             fileCounts[threadIndex].FailureCount++;
                             UpdateFileCountLabel(threadIndex);
-                        }
+                        }*/
 
                         //fileCounts[threadIndex].SuccessCount++;
 
@@ -156,25 +159,52 @@ namespace checkFileContent
             }
         }
 
-        bool transformFunction(string file, int threadIndex)
+        void transformFile(string file, int threadIndex)
+        {
+
+            Console.Write("WHY NOT COMIPNG HERE\n");
+            string extension = Path.GetExtension(file);
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
+            string transformedFileName = "";
+            string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
+
+            if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+            {
+                transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".atxt");
+                if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
+                {
+                    File.Copy(file, transformedFileName);
+                    //fileCounts[threadIndex].SuccessCount++;
+                }
+            }
+            else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+            {
+                transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".abin");
+                if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
+                {
+                    File.Copy(file, transformedFileName);
+                    //fileCounts[threadIndex].SuccessCount++;
+                }
+            }
+            File.Move(file, originalFilePath);
+        }
+
+        bool checkTransformFunction(string file, int threadIndex)
         {
             // File.Delete(file);
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
-            bool isSatisfy = false;
-
-            if (checkExtension(file, threadIndex) == true && checkFileName(file, threadIndex) == true && checkContent(file, threadIndex) == true)
-            {
-                isSatisfy = true;
-            }
+            
+            if (checkExtension(file, threadIndex) == false)
+                return false;
+            if (checkFileName(file, threadIndex) == false)
+                return false;
+           /* if (checkContent(file, threadIndex) == true)
+                return false;*/
                 
-            /*checkExtension(file, threadIndex);
-            checkFileName(file, threadIndex);
-            checkContent(file, threadIndex);
-*/
+            
 
-            File.Move(file, originalFilePath);
-        
-            return isSatisfy;
+            
+            return true;
         }
 
         bool checkExtension(string file, int threadIndex)
@@ -204,7 +234,9 @@ namespace checkFileContent
             }
             else
             {
-                //fileCounts[threadIndex].FailureCount++;
+                fileCounts[threadIndex].FailureCount++;
+                UpdateFileCountLabel(threadIndex);
+                File.Move(file, originalFilePath);
                 return false;
             }
             return true;
@@ -217,12 +249,12 @@ namespace checkFileContent
 
             if (!fileName.StartsWith("'[TargetFileName]'"))
             {
-                //fileCounts[threadIndex].FailureCount++;
+                fileCounts[threadIndex].FailureCount++;
                 Console.WriteLine($"File name error, transformation failed: {fileName}");
 
                 File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
 
-                //UpdateFileCountLabel(threadIndex);
+                UpdateFileCountLabel(threadIndex);
                 return false;
             }
             return true;
