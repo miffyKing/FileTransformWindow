@@ -224,37 +224,6 @@ namespace checkFileContent
             }
         }
 
-        /*void transformFile(string file, int threadIndex)
-        {
-
-            Console.Write("WHY NOT COMIPNG HERE\n");
-            string extension = Path.GetExtension(file);
-            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
-            string transformedFileName = "";
-            string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
-
-            if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
-            {
-                transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".atxt");
-                if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
-                {
-                    Console.Write("no duplicate file name in transform aresa");
-                    File.Copy(file, transformedFileName);
-                }
-            }
-            else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
-            {
-                transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".abin");
-                if (!File.Exists(transformedFileName)) // 파일이 이미 존재하지 않는 경우에만 복사
-                {
-                    Console.Write("no duplicate file name in transform aresa");
-                    File.Copy(file, transformedFileName);
-                }
-            }
-            File.Move(file, originalFilePath);
-        }*/
-
-
 
         bool checkTransformFunction(string file, int threadIndex)
         {
@@ -265,6 +234,9 @@ namespace checkFileContent
                 return false;
             if (checkFileName(file, threadIndex) == false)
                 return false;
+            if (checkFileSize(file, threadIndex) == false)
+                return false;
+            
             return true;
         }
 
@@ -304,15 +276,38 @@ namespace checkFileContent
             {
                 fileCounts[threadIndex].FailureCount++;
                 Console.WriteLine($"File name error, transformation failed: {fileName}");
+                WriteLog(logFilePath, "File name error, transformation failed: " + fileName);
                 File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
-            WriteLog(logFilePath, "File Name check PASSED for .abin");
+            WriteLog(logFilePath, "File Name check PASSED for " + fileName);
 
             return true;
         }
 
+        bool checkFileSize(string file, int threadIndex)
+        {
+            string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
+            string fileName = Path.GetFileName(file);
+            string originalFilePath = Path.Combine("..\\DATAS\\original\\", fileName);
+
+            FileInfo fileInfo = new FileInfo(file);
+
+            //length로 파일 크기 바이트 단위 확인 가능
+            if (fileInfo.Length < 18)
+            {
+                fileCounts[threadIndex].FailureCount++;
+                Console.WriteLine($"File Size error, small then 18 byte, transformation failed: {fileName}");
+                WriteLog(logFilePath, "File Size error, small then 18 byte, transformation failed" + fileName);
+                File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
+                UpdateFileCountLabel(threadIndex);
+                return false;
+            }
+
+            WriteLog(logFilePath, "File Size check PASSED for " + fileName);
+            return true;
+        }
 
         bool checkContent(string file, int threadIndex)
         {
