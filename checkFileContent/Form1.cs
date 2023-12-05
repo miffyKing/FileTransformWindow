@@ -22,22 +22,6 @@ namespace checkFileContent
             public int FailureCount { get; set; }
         }
 
-        //실패 파일 저장 구조체
-        public class FailureInfo
-        {
-            public string FileName { get; set; }
-            public int ThreadIndex { get; set; }
-            public string Reason { get; set; }
-
-            public FailureInfo(string fileName, int threadIndex, string reason)
-            {
-                FileName = fileName;
-                ThreadIndex = threadIndex;
-                Reason = reason;
-            }
-        }
-
-
         private FileSystemWatcher watcher;
         private ConcurrentQueue<string> fileList = new ConcurrentQueue<string>();
         private Thread[] conversionThreads = new Thread[3];
@@ -474,7 +458,9 @@ namespace checkFileContent
 
         private void errorLogCheck_Click(object sender, EventArgs e)
         {
-            try
+            showErrorList newForm2 = new showErrorList(failedFiles);
+            newForm2.ShowDialog();
+            /*try
             {
                 // 지정된 경로에 대한 전체 경로를 계산
                 string folderPath = Path.GetFullPath("..\\DATAS\\log\\errorLog");
@@ -493,7 +479,7 @@ namespace checkFileContent
             catch (Exception ex)
             {
                 MessageBox.Show($"Error opening the folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }*/
         }
     }
 }

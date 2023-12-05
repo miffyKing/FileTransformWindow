@@ -30,6 +30,7 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.errorLogCheck = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // label1
@@ -70,6 +71,7 @@
         #endregion
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button errorLogCheck;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 
