@@ -108,19 +108,25 @@ namespace checkFileContent
                     UpdateThreadLabel(threadIndex, $"Processing {Path.GetFileName(filePath)}");
                     UpdateFileCountLabel(threadIndex);
 
+                    string originalPath = "..\\DATAS\\original\\";
+                    filePath = checkDupFileName(filePath, originalPath);
                     Thread.Sleep(5000);
                     Console.WriteLine($"Thread {threadIndex} is deleting file: {Path.GetFileName(filePath)}");
                     Thread.Sleep(1000);
                     try
                     {
+                        string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(filePath));
+
                         //originalpath 에 같은 파일ㅇ명 있으면 _ 추가하는 로직 작성
-                        //checkDupFineName(filePath, threadIndex);
+                        
+
+                        Console.Write("Changed file name is    || " + filePath);
                         // 파일명 바뀌었음을 로그파일에 적고싶은데 어떻게 해야할까 - 그냥 flag 달자.
 
                         string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(filePath) + ".txt");
                         WriteLog(logFilePath, "Thread index :" + threadIndex + "Starts transrform");
 
-                        string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(filePath));
+                        
 
                         if (checkTransformFunction(filePath, threadIndex) == true)
                         {
@@ -161,6 +167,25 @@ namespace checkFileContent
                 }
             }
         }
+
+        private string checkDupFileName(string filePath, string originalDir)
+        {
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
+            string extension = Path.GetExtension(filePath);
+            string newFilePath = filePath;
+            int count = 2;
+
+            while (File.Exists(Path.Combine(originalDir, Path.GetFileName(newFilePath))))
+            {
+                newFilePath = Path.Combine(Path.GetDirectoryName(filePath), $"{fileNameWithoutExt}({count++}){extension}");
+            }
+
+            // Rename the actual file
+            File.Move(filePath, newFilePath);
+
+            return newFilePath;
+        }
+
 
         void transformFile(string file, int threadIndex)
         {
@@ -404,6 +429,30 @@ namespace checkFileContent
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void errorLogCheck_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // 지정된 경로에 대한 전체 경로를 계산
+                string folderPath = Path.GetFullPath("..\\DATAS\\log\\errorLog");
+
+                // 폴더가 실제로 존재하는지 확인
+                if (Directory.Exists(folderPath))
+                {
+                    // 폴더 열기
+                    System.Diagnostics.Process.Start(folderPath);
+                }
+                else
+                {
+                    MessageBox.Show("Error log folder does not exist.", "Folder Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening the folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
+            this.errorLogCheck = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -41,11 +42,22 @@
             this.label1.Text = "label1";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
+            // errorLogCheck
+            // 
+            this.errorLogCheck.Location = new System.Drawing.Point(12, 96);
+            this.errorLogCheck.Name = "errorLogCheck";
+            this.errorLogCheck.Size = new System.Drawing.Size(104, 63);
+            this.errorLogCheck.TabIndex = 1;
+            this.errorLogCheck.Text = "오류 로그 확인";
+            this.errorLogCheck.UseVisualStyleBackColor = true;
+            this.errorLogCheck.Click += new System.EventHandler(this.errorLogCheck_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1056, 550);
+            this.Controls.Add(this.errorLogCheck);
             this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -57,7 +69,7 @@
 
         #endregion
         private System.Windows.Forms.Label label1;
-
+        private System.Windows.Forms.Button errorLogCheck;
     }
 }
 
