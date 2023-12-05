@@ -52,7 +52,7 @@
             this.errorLogCheck.Name = "errorLogCheck";
             this.errorLogCheck.Size = new System.Drawing.Size(151, 83);
             this.errorLogCheck.TabIndex = 1;
-            this.errorLogCheck.Text = "button1";
+            this.errorLogCheck.Text = "로그 폴더 열기";
             this.errorLogCheck.UseVisualStyleBackColor = true;
             this.errorLogCheck.Click += new System.EventHandler(this.errorLogCheck_Click);
             // 

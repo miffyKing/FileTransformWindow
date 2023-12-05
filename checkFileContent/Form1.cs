@@ -225,7 +225,9 @@ namespace checkFileContent
             // File.Delete(file);
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
             string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed" };
-
+            
+            //string errorLogPath = Path.Combine("..\\DATAS\\log\\errorLog\\", "ERROR_" + Path.GetFileName(logFilePath));
+            //이거 에러 로그 파일 생성할 때 쓴 파일명 만드는건데, 표에서 로그를 클릭했을 때 이 파일이름을 찾아서 열리도록 하면 제일 좋을듯
 
             if (checkExtension(file, threadIndex) == false)
             {
