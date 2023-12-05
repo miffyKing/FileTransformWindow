@@ -22,6 +22,22 @@ namespace checkFileContent
             public int FailureCount { get; set; }
         }
 
+        //실패 파일 저장 구조체
+        public class FailureInfo
+        {
+            public string FileName { get; set; }
+            public int ThreadIndex { get; set; }
+            public string Reason { get; set; }
+
+            public FailureInfo(string fileName, int threadIndex, string reason)
+            {
+                FileName = fileName;
+                ThreadIndex = threadIndex;
+                Reason = reason;
+            }
+        }
+
+
         private FileSystemWatcher watcher;
         private ConcurrentQueue<string> fileList = new ConcurrentQueue<string>();
         private Thread[] conversionThreads = new Thread[3];
@@ -34,6 +50,8 @@ namespace checkFileContent
         private bool isRunning = true; // 스레드 실행 제어를 위한 플래그
         private FileProcessCount[] fileCounts = new FileProcessCount[3];
 
+        //실패한 파일 모을 배열 -> 이걸 어떻게 표로 나타낼 수 있다면 UI 완성임.
+        private ConcurrentQueue<FailureInfo> failedFiles = new ConcurrentQueue<FailureInfo>();
 
 
         public Form1()
@@ -222,16 +240,32 @@ namespace checkFileContent
         {
             // File.Delete(file);
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
-            
-            if (checkExtension(file, threadIndex) == false)
-                return false;
-            if (checkFileName(file, threadIndex) == false)
-                return false;
-            if (checkFileSize(file, threadIndex) == false)
-                return false;
-            if (checkFileHeader(file, threadIndex) == false)
-                return false;
+            string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed" };
 
+
+            if (checkExtension(file, threadIndex) == false)
+            {
+                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[0]));
+                return false;
+            }
+                
+            if (checkFileName(file, threadIndex) == false)
+            {
+                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[1]));
+                return false;
+            }
+                
+            if (checkFileSize(file, threadIndex) == false)
+            {
+                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[2]));
+                return false;
+            }
+            
+            if (checkFileHeader(file, threadIndex) == false)
+            {
+                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[3]));
+                return false;
+            }
             return true;
         }
 
