@@ -203,8 +203,7 @@ namespace checkFileContent
                     if (!File.Exists(transformedFileName))
                     {
                         Console.Write("no duplicate file name in transform area\n");
-                        File.WriteAllText(transformedFileName, Encoding.Default.GetString(fileData));
-
+                        File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(fileData), Encoding.UTF8);
                     }
                 }
                 else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
@@ -214,7 +213,6 @@ namespace checkFileContent
                     {
                         Console.Write("no duplicate file name in transform area\n");
                         File.WriteAllBytes(transformedFileName, fileData);
-
                     }
                 }
             }
