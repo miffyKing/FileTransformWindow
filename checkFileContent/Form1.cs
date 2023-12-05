@@ -118,21 +118,17 @@ namespace checkFileContent
 
                         //originalpath 에 같은 파일ㅇ명 있으면 _ 추가하는 로직 작성
                         
-
                         Console.Write("Changed file name is    || " + filePath);
                         // 파일명 바뀌었음을 로그파일에 적고싶은데 어떻게 해야할까 - 그냥 flag 달자.
 
                         string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(filePath) + ".txt");
-                        WriteLog(logFilePath, "Thread index :" + threadIndex + "Starts transrform");
-
-                        
-
+                        WriteLog(logFilePath, "Thread index :" + threadIndex + " Starts transrform");
+                                                
                         if (checkTransformFunction(filePath, threadIndex) == true)
                         {
                             fileCounts[threadIndex].SuccessCount++;
                             UpdateFileCountLabel(threadIndex);  // 이거 변환프로세스 따라 값 바꿔야함
                             transformFile(filePath, threadIndex);
-                            //실제 파일 변환하는 로직 checkExtension 에 주석처리 되어 있는거 여기서 구현해야함. transformFile();
                         }
                         else
                         {
@@ -141,7 +137,6 @@ namespace checkFileContent
                             string errorLogPath = Path.Combine("..\\DATAS\\log\\errorLog\\", "ERROR_" + Path.GetFileName(logFilePath));
                             
                             File.Move(logFilePath, errorLogPath);
-                            
                         }
 
                         Console.Write("before move file to originla folder" + filePath);
@@ -179,7 +174,6 @@ namespace checkFileContent
                 newFilePath = Path.Combine(Path.GetDirectoryName(filePath), $"{fileNameWithoutExt}({count++}){extension}");
             }
 
-            // Rename the actual file
             File.Move(filePath, newFilePath);
 
             return newFilePath;
@@ -235,7 +229,9 @@ namespace checkFileContent
                 return false;
             if (checkFileSize(file, threadIndex) == false)
                 return false;
-            
+            if (checkFileHeader(file, threadIndex) == false)
+                return false;
+
             return true;
         }
 
@@ -308,20 +304,43 @@ namespace checkFileContent
             return true;
         }
 
-        bool checkContent(string file, int threadIndex)
+        bool checkFileHeader(string file, int threadIndex)
         {
+            string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
             string extension = Path.GetExtension(file);
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
+            const string headerToCheck = "[ATRANS] ";
 
-            if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+            try
             {
+                byte[] fileData = File.ReadAllBytes(file);
 
+                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase) || extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                {
+                    string fileContent = Encoding.UTF8.GetString(fileData);
+                    string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (lines.Length > 0 && lines[0].StartsWith(headerToCheck))
+                    {
+                        WriteLog(logFilePath, "File Header correct, it starts with [ATRANS]  " + Path.GetFileName(file));
+                        return true;
+                    }
+                    else
+                    {
+                        WriteLog(logFilePath, "File Header error: Should start with [ATRANS] : " + Path.GetFileName(file));
+                    }
+                }
             }
-            else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+            catch (Exception ex)
             {
-                
+                WriteLog(logFilePath, "Error in checkFileHeader: " + ex.Message);
             }
-            return true;
+
+            // 예외 발생 시 또는 조건 불만족 시 false 반환
+            fileCounts[threadIndex].FailureCount++;
+            File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
+            UpdateFileCountLabel(threadIndex);
+            return false;
         }
 
 
