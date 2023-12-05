@@ -67,7 +67,6 @@ namespace checkFileContent
         private void OnCreated(object sender, FileSystemEventArgs e)
         {
             fileList.Enqueue(e.FullPath);
-            ProcessFileList();
         }
 
         private void InitializeThreadsAndLabels()
@@ -365,10 +364,6 @@ namespace checkFileContent
                     fileCountLabels[threadIndex].Text = text;
                 }
             }
-        }
-
-        private void ProcessFileList()
-        {
         }
 
         private static void RunGenerateFolder()
