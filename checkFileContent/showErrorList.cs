@@ -27,15 +27,25 @@ namespace checkFileContent
 
 
             InitializeDataGridView();
-            PopulateDataGridView();
+            PopulateDataGridView(); 
+            PopulateDataGridView2(); 
+            PopulateDataGridView3();
         }
 
         private void InitializeDataGridView()
         {
-            failureDataGridView.Columns.Clear();
-            failureDataGridView.Columns.Add("FileName", "File Name");
-            failureDataGridView.Columns.Add("ThreadIndex", "Thread Index");
-            failureDataGridView.Columns.Add("Reason", "Reason");
+            failureDataGridView1.Columns.Clear();
+            failureDataGridView1.Columns.Add("FileName", "File Name");
+            failureDataGridView1.Columns.Add("ThreadIndex", "Thread Index");
+            failureDataGridView1.Columns.Add("Reason", "Reason");
+            failureDataGridView2.Columns.Clear();
+            failureDataGridView2.Columns.Add("FileName", "File Name");
+            failureDataGridView2.Columns.Add("ThreadIndex", "Thread Index");
+            failureDataGridView2.Columns.Add("Reason", "Reason");
+            failureDataGridView3.Columns.Clear();
+            failureDataGridView3.Columns.Add("FileName", "File Name");
+            failureDataGridView3.Columns.Add("ThreadIndex", "Thread Index");
+            failureDataGridView3.Columns.Add("Reason", "Reason");
         }
 
         /* private void PopulateDataGridView()
@@ -59,16 +69,71 @@ namespace checkFileContent
                 {
                     this.Invoke((MethodInvoker)delegate
                     {
-                        
-                        failureDataGridView.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
+                        if (failure.ThreadIndex == 0)
+                        {
+                            failureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex+1, failure.Reason);
+                        }
                     });
                 }
                 else
                 {
-                    failureDataGridView.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
+                    if (failure.ThreadIndex == 0)
+                    {
+                        failureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex+1, failure.Reason);
+                    }
                 }
             }
         }
+        private void PopulateDataGridView2()
+        {
+            foreach (var failure in failureQueue)
+            {
+                string ActualFileName = Path.GetFileName(failure.FileName);
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        if (failure.ThreadIndex == 1)
+                        {
+                            failureDataGridView2.Rows.Add(ActualFileName, failure.ThreadIndex+1, failure.Reason);
+                        }
+                    });
+                }
+                else
+                {
+                    if (failure.ThreadIndex == 1)
+                    {
+                        failureDataGridView2.Rows.Add(ActualFileName, failure.ThreadIndex+1, failure.Reason);
+                    }
+                }
+            }
+        }
+
+        private void PopulateDataGridView3()
+        {
+            foreach (var failure in failureQueue)
+            {
+                string ActualFileName = Path.GetFileName(failure.FileName);
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        if (failure.ThreadIndex == 2)
+                        {
+                            failureDataGridView3.Rows.Add(ActualFileName, failure.ThreadIndex + 1, failure.Reason);
+                        }
+                    });
+                }
+                else
+                {
+                    if (failure.ThreadIndex == 2)
+                    {
+                        failureDataGridView3.Rows.Add(ActualFileName, failure.ThreadIndex + 1, failure.Reason);
+                    }
+                }
+            }
+        }
+
 
         private void showErrorList_Load(object sender, EventArgs e)
         {
@@ -102,6 +167,11 @@ namespace checkFileContent
             {
                 MessageBox.Show($"Error opening the folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

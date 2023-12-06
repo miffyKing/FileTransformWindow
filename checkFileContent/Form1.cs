@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace checkFileContent
@@ -26,17 +20,13 @@ namespace checkFileContent
         private ConcurrentQueue<string> fileList = new ConcurrentQueue<string>();
         private Thread[] conversionThreads = new Thread[3];
 
-
         private Label[] threadLabels = new Label[3];
         private Label[] fileCountLabels = new Label[3];
 
-
         private bool isRunning = true; // 스레드 실행 제어를 위한 플래그
         private FileProcessCount[] fileCounts = new FileProcessCount[3];
-
         //실패한 파일 모을 배열 -> 이걸 어떻게 표로 나타낼 수 있다면 UI 완성임.
         private ConcurrentQueue<FailureInfo> failedFiles = new ConcurrentQueue<FailureInfo>();
-
 
         public Form1()
         {
@@ -46,16 +36,11 @@ namespace checkFileContent
             {
                 fileCounts[i] = new FileProcessCount { SuccessCount = 0, FailureCount = 0 };
             }
-            RunGenerateFolder();
-
-            InitializeFileSystemWatcher();
-
-            InitializeThreadsAndLabels();
-
-            this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing); // FormClosing 이벤트 핸들러 추가
-
+            RunGenerateFolder();                //폴더 생성
+            InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
+            InitializeThreadsAndLabels();       //UI 표시용 invoke
+            this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);
         }
-
 
         private void InitializeFileSystemWatcher()
         {
@@ -79,6 +64,7 @@ namespace checkFileContent
                 threadLabels[i].Location = new System.Drawing.Point(100, 50 + (i * 20));
                 threadLabels[i].Size = new System.Drawing.Size(200, 15);
                 this.Controls.Add(threadLabels[i]);
+                threadLabels[i].Text = "파일 입력 대기";
 
                 fileCountLabels[i] = new Label();
                 fileCountLabels[i].Location = new System.Drawing.Point(350, 50 + (i * 20));
@@ -90,12 +76,10 @@ namespace checkFileContent
                 fileCounts[i].SuccessCount = 0;
                 fileCounts[i].FailureCount = 0;
 
-                int threadIndex = i; // 각 스레드의 고유 인덱스를 생성
+                int threadIndex = i;
                 conversionThreads[i] = new Thread(() => ProcessFiles(threadIndex));
                 conversionThreads[i].Start();
-
                 UpdateFileCountLabel(threadIndex);
-
             }
         }
 
@@ -106,26 +90,27 @@ namespace checkFileContent
             {
                 if (fileList.TryDequeue(out string filePath))
                 {
-                    UpdateThreadLabel(threadIndex, $"Processing {Path.GetFileName(filePath)}");
                     UpdateFileCountLabel(threadIndex);
-
                     string originalPath = "..\\DATAS\\original\\";
+                    string prevName = filePath;
+                    //bool nameChangeFlag = false;
                     filePath = checkDupFileName(filePath, originalPath);
-                    Thread.Sleep(5000);
-                    Console.WriteLine($"Thread {threadIndex} is deleting file: {Path.GetFileName(filePath)}");
+                   
+
+                    // 파일명 바뀌었음을 로그파일에 적고싶은데 어떻게 해야할까 - 그냥 flag 달자.
+
+                    UpdateThreadLabel(threadIndex, "변환 시작" );
                     Thread.Sleep(1000);
+
                     try
                     {
-                        string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(filePath));
-
-                        //originalpath 에 같은 파일ㅇ명 있으면 _ 추가하는 로직 작성
-                        
-                        Console.Write("Changed file name is    || " + filePath);
-                        // 파일명 바뀌었음을 로그파일에 적고싶은데 어떻게 해야할까 - 그냥 flag 달자.
-
+                        string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(filePath));              
                         string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(filePath) + ".txt");
                         WriteLog(logFilePath, "Thread index :" + threadIndex + " Starts transrform");
-                                                
+                        if (prevName != filePath)
+                        {
+                            WriteLog(logFilePath, "Duplicate name found in original path, File Name changed.");
+                        }
                         if (checkTransformFunction(filePath, threadIndex) == true)
                         {
                             fileCounts[threadIndex].SuccessCount++;
@@ -137,20 +122,20 @@ namespace checkFileContent
                             string errorMessage = "File failed to transform, move to Error log folder";
                             WriteLog(logFilePath, errorMessage);
                             string errorLogPath = Path.Combine("..\\DATAS\\log\\errorLog\\", "ERROR_" + Path.GetFileName(logFilePath));
-                            
                             File.Move(logFilePath, errorLogPath);
+                            UpdateThreadLabel(threadIndex, "변환 실패");
+                            Thread.Sleep(1000);
                         }
-
-                        Console.Write("before move file to originla folder" + filePath);
                         File.Move(filePath, originalFilePath);
-                        UpdateThreadLabel(threadIndex, $"Thread {threadIndex} deleted {Path.GetFileName(filePath)}");
-                        Thread.Sleep(1000);
                     }
                     catch (Exception ex)
                     {
-                        UpdateThreadLabel(threadIndex, $"Error deleting file: {ex.Message}");
+                        UpdateThreadLabel(threadIndex, "변환 실패");
+                        Thread.Sleep(1000);
                     }
-                    UpdateThreadLabel(threadIndex, $"Waiting for files");
+                    UpdateThreadLabel(threadIndex, "변환 종료.");
+                    Thread.Sleep(10000);
+                    UpdateThreadLabel(threadIndex, $"변환 파일 입력 대기");
                     // 중단 신호를 다시 확인
                     if (!isRunning)
                         break;
@@ -175,9 +160,7 @@ namespace checkFileContent
             {
                 newFilePath = Path.Combine(Path.GetDirectoryName(filePath), $"{fileNameWithoutExt}({count++}){extension}");
             }
-
             File.Move(filePath, newFilePath);
-
             return newFilePath;
         }
 
@@ -188,7 +171,6 @@ namespace checkFileContent
             string extension = Path.GetExtension(file);
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
             string transformedFileName = "";
-            string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
             byte[] fileData = File.ReadAllBytes(file);
             try
             {
@@ -214,7 +196,6 @@ namespace checkFileContent
             catch (Exception ex)
             {
                 Console.WriteLine("Error in transformFile: " + ex.Message);
-                // 오류 발생 시 함수를 종료하여 후속 단계로 진행하지 않음
                 return;
             }
         }
@@ -222,13 +203,8 @@ namespace checkFileContent
 
         bool checkTransformFunction(string file, int threadIndex)
         {
-            // File.Delete(file);
-            string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
-            string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed" };
-            
-            //string errorLogPath = Path.Combine("..\\DATAS\\log\\errorLog\\", "ERROR_" + Path.GetFileName(logFilePath));
-            //이거 에러 로그 파일 생성할 때 쓴 파일명 만드는건데, 표에서 로그를 클릭했을 때 이 파일이름을 찾아서 열리도록 하면 제일 좋을듯
-
+            string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed" };   
+           
             if (checkExtension(file, threadIndex) == false)
             {
                 failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[0]));
@@ -258,7 +234,6 @@ namespace checkFileContent
         bool checkExtension(string file, int threadIndex)
         {
             string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
-
             string extension = Path.GetExtension(file);
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
 
@@ -306,7 +281,6 @@ namespace checkFileContent
             string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
             string fileName = Path.GetFileName(file);
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", fileName);
-
             FileInfo fileInfo = new FileInfo(file);
 
             //length로 파일 크기 바이트 단위 확인 가능
@@ -319,7 +293,6 @@ namespace checkFileContent
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
-
             WriteLog(logFilePath, "File Size check PASSED for " + fileName);
             return true;
         }
@@ -355,7 +328,6 @@ namespace checkFileContent
             {
                 WriteLog(logFilePath, "Error in checkFileHeader: " + ex.Message);
             }
-
             // 예외 발생 시 또는 조건 불만족 시 false 반환
             fileCounts[threadIndex].FailureCount++;
             File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
@@ -455,33 +427,12 @@ namespace checkFileContent
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
         }
 
         private void errorLogCheck_Click(object sender, EventArgs e)
         {
             showErrorList newForm2 = new showErrorList(failedFiles);
             newForm2.ShowDialog();
-            /*try
-            {
-                // 지정된 경로에 대한 전체 경로를 계산
-                string folderPath = Path.GetFullPath("..\\DATAS\\log\\errorLog");
-
-                // 폴더가 실제로 존재하는지 확인
-                if (Directory.Exists(folderPath))
-                {
-                    // 폴더 열기
-                    System.Diagnostics.Process.Start(folderPath);
-                }
-                else
-                {
-                    MessageBox.Show("Error log folder does not exist.", "Folder Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error opening the folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }*/
         }
     }
 }
