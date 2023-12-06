@@ -30,11 +30,12 @@
         {
             this.errorLogCheck = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.labelStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // errorLogCheck
             // 
-            this.errorLogCheck.Location = new System.Drawing.Point(12, 96);
+            this.errorLogCheck.Location = new System.Drawing.Point(12, 251);
             this.errorLogCheck.Name = "errorLogCheck";
             this.errorLogCheck.Size = new System.Drawing.Size(104, 63);
             this.errorLogCheck.TabIndex = 1;
@@ -42,22 +43,35 @@
             this.errorLogCheck.UseVisualStyleBackColor = true;
             this.errorLogCheck.Click += new System.EventHandler(this.errorLogCheck_Click);
             // 
+            // labelStatus
+            // 
+            this.labelStatus.AutoSize = true;
+            this.labelStatus.Location = new System.Drawing.Point(476, 35);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(54, 18);
+            this.labelStatus.TabIndex = 2;
+            this.labelStatus.Text = "label1";
+            this.labelStatus.Click += new System.EventHandler(this.label1_Click_1);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1056, 550);
+            this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.errorLogCheck);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
         private System.Windows.Forms.Button errorLogCheck;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Label labelStatus;
     }
 }
 

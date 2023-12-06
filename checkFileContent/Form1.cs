@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Data;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -36,8 +37,12 @@ namespace checkFileContent
             {
                 fileCounts[i] = new FileProcessCount { SuccessCount = 0, FailureCount = 0 };
             }
+
             RunGenerateFolder();                //폴더 생성
+
+            UpdateStatus("파일 변환 전");
             InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
+            
             InitializeThreadsAndLabels();       //UI 표시용 invoke
             this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);
         }
@@ -53,7 +58,10 @@ namespace checkFileContent
 
         private void OnCreated(object sender, FileSystemEventArgs e)
         {
+
             fileList.Enqueue(e.FullPath);
+
+            UpdateStatus("파일 변환 중");
         }
 
         private void InitializeThreadsAndLabels()
@@ -61,13 +69,13 @@ namespace checkFileContent
             for (int i = 0; i < 3; i++)
             {
                 threadLabels[i] = new Label();
-                threadLabels[i].Location = new System.Drawing.Point(100, 50 + (i * 20));
+                threadLabels[i].Location = new System.Drawing.Point(200, 100 + (i * 50));
                 threadLabels[i].Size = new System.Drawing.Size(200, 15);
                 this.Controls.Add(threadLabels[i]);
                 threadLabels[i].Text = "파일 입력 대기";
 
                 fileCountLabels[i] = new Label();
-                fileCountLabels[i].Location = new System.Drawing.Point(350, 50 + (i * 20));
+                fileCountLabels[i].Location = new System.Drawing.Point(450, 100 + (i * 50));
                 fileCountLabels[i].Size = new System.Drawing.Size(200, 15);
                 fileCountLabels[i].Text = "Count: 0";
 
@@ -90,6 +98,10 @@ namespace checkFileContent
             {
                 if (fileList.TryDequeue(out string filePath))
                 {
+                   /* if (fileList.IsEmpty) // fileList가 비어있는 경우
+                    {
+                        UpdateStatus("파일 변환 완료");
+                    }*/
                     UpdateFileCountLabel(threadIndex);
                     string originalPath = "..\\DATAS\\original\\";
                     string prevName = filePath;
@@ -377,6 +389,18 @@ namespace checkFileContent
             }
         }
 
+        private void UpdateStatus(string status)
+        {
+            if (labelStatus.InvokeRequired)
+            {
+                labelStatus.Invoke(new Action(() => labelStatus.Text = status));
+            }
+            else
+            {
+                labelStatus.Text = status;
+            }
+        }
+
         private static void RunGenerateFolder()
         {
             try
@@ -433,6 +457,11 @@ namespace checkFileContent
         {
             showErrorList newForm2 = new showErrorList(failedFiles);
             newForm2.ShowDialog();
+        }
+
+        private void label1_Click_1(object sender, EventArgs e)
+        {
+
         }
     }
 }
