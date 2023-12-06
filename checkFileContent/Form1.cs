@@ -262,7 +262,7 @@ namespace checkFileContent
             string fileName = Path.GetFileName(file);
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", fileName);
 
-            if (!fileName.StartsWith("'[TargetFileName]'"))
+            if (!fileName.StartsWith("[TargetFileName] "))
             {
                 fileCounts[threadIndex].FailureCount++;
                 Console.WriteLine($"File name error, transformation failed: {fileName}");
