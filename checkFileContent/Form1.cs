@@ -418,11 +418,10 @@ namespace checkFileContent
                 foreach (string folder in folders)
                 {
                     // 이미 폴더가 존재한다면 삭제
-                    if (Directory.Exists(folder))
+                    if (!Directory.Exists(folder))
                     {
-                        Directory.Delete(folder, true); // true 폴더 내 모든 파일 및 하위 폴더 삭제
+                        Directory.CreateDirectory(folder);
                     }
-                    Directory.CreateDirectory(folder);
                 }
             }
             catch (Exception ex)
