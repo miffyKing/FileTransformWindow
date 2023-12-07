@@ -46,7 +46,7 @@ namespace checkFileContent
             failureDataGridView3.Columns.Add("FileName", "File Name");
             failureDataGridView3.Columns.Add("ThreadIndex", "Thread Index");
             failureDataGridView3.Columns.Add("Reason", "Reason");
-            failureDataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            failureDataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;//label 다 채울게요
             failureDataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             failureDataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 

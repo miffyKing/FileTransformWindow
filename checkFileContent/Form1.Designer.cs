@@ -36,11 +36,12 @@
             this.firstThreadStatus = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.DirectUpload = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // errorLogCheck
             // 
-            this.errorLogCheck.Location = new System.Drawing.Point(12, 251);
+            this.errorLogCheck.Location = new System.Drawing.Point(12, 183);
             this.errorLogCheck.Name = "errorLogCheck";
             this.errorLogCheck.Size = new System.Drawing.Size(104, 63);
             this.errorLogCheck.TabIndex = 1;
@@ -114,11 +115,22 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.thirdThreadButton_Click);
             // 
+            // DirectUpload
+            // 
+            this.DirectUpload.Location = new System.Drawing.Point(12, 272);
+            this.DirectUpload.Name = "DirectUpload";
+            this.DirectUpload.Size = new System.Drawing.Size(104, 72);
+            this.DirectUpload.TabIndex = 9;
+            this.DirectUpload.Text = "파일 직접 업로드";
+            this.DirectUpload.UseVisualStyleBackColor = true;
+            this.DirectUpload.Click += new System.EventHandler(this.DirectUpload_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1056, 550);
+            this.Controls.Add(this.DirectUpload);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.firstThreadStatus);
@@ -144,6 +156,7 @@
         private System.Windows.Forms.Button firstThreadStatus;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button DirectUpload;
     }
 }
 

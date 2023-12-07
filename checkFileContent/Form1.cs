@@ -557,5 +557,36 @@ namespace checkFileContent
         {
 
         }
+
+        private void DirectUpload_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Select a file to upload";
+            openFileDialog.Filter = "All files (*.*)|*.*"; // 필요한 파일 형식에 맞게 필터 조정
+            openFileDialog.Multiselect = false; // 단일 파일 선택
+
+            // 파일 탐색기를 열고 사용자가 파일을 선택하면
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // 선택된 파일의 전체 경로
+                string selectedFilePath = openFileDialog.FileName;
+                // 복사될 경로 및 파일 이름 설정
+                string destinationPath = Path.Combine("..\\DATAS\\inputRoute\\", Path.GetFileName(selectedFilePath));
+
+                try
+                {
+                    // 파일을 목적지 경로로 복사 (덮어쓰기 금지)
+                    File.Copy(selectedFilePath, destinationPath, false);
+
+                    // 성공 메시지 (옵션)
+                    MessageBox.Show("File uploaded successfully.");
+                }
+                catch (IOException ioEx)
+                {
+                    // 파일이 이미 존재하는 경우 또는 다른 IO 예외 처리
+                    MessageBox.Show("An error occurred: " + ioEx.Message);
+                }
+            }
+        }
     }
 }
