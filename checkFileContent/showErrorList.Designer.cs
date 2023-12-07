@@ -42,7 +42,7 @@
             this.failureDataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.failureDataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.failureDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.failureDataGridView1.Location = new System.Drawing.Point(23, 135);
+            this.failureDataGridView1.Location = new System.Drawing.Point(12, 135);
             this.failureDataGridView1.Name = "failureDataGridView1";
             this.failureDataGridView1.RowHeadersWidth = 62;
             this.failureDataGridView1.RowTemplate.Height = 30;

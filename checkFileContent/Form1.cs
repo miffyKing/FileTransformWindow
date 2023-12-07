@@ -28,6 +28,7 @@ namespace checkFileContent
         private FileProcessCount[] fileCounts = new FileProcessCount[3];
         //실패한 파일 모을 배열 -> 이걸 어떻게 표로 나타낼 수 있다면 UI 완성임.
         private ConcurrentQueue<FailureInfo> failedFiles = new ConcurrentQueue<FailureInfo>();
+        private ConcurrentQueue<SuccessInfo> successedFiles = new ConcurrentQueue<SuccessInfo>();
 
         public Form1()
         {
@@ -39,7 +40,6 @@ namespace checkFileContent
             }
 
             RunGenerateFolder();                //폴더 생성
-
            
             InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
             
@@ -61,9 +61,7 @@ namespace checkFileContent
 
         private void OnCreated(object sender, FileSystemEventArgs e)
         {
-
             fileList.Enqueue(e.FullPath);
-
             UpdateStatus("파일 변환 중");
         }
 
@@ -75,13 +73,14 @@ namespace checkFileContent
                 threadLabels[i].Location = new System.Drawing.Point(200, 100 + (i * 50));
                 threadLabels[i].Size = new System.Drawing.Size(200, 15);
                 this.Controls.Add(threadLabels[i]);
+                threadLabels[i].BringToFront();
                 threadLabels[i].Text = "파일 입력 대기";
 
                 fileCountLabels[i] = new Label();
                 fileCountLabels[i].Location = new System.Drawing.Point(450, 100 + (i * 50));
                 fileCountLabels[i].Size = new System.Drawing.Size(200, 15);
                 fileCountLabels[i].Text = "Count: 0";
-
+                fileCountLabels[i].BringToFront();
                 this.Controls.Add(fileCountLabels[i]);
 
                 fileCounts[i].SuccessCount = 0;
@@ -93,6 +92,28 @@ namespace checkFileContent
                 UpdateFileCountLabel(threadIndex);
             }
         }
+
+        /*
+         private void InitializeThreadsAndLabels()
+{
+    Label[] threadLabels = { labelThread1, labelThread2, labelThread3 };
+    Label[] fileCountLabels = { labelCount1, labelCount2, labelCount3 };
+
+    for (int i = 0; i < 3; i++)
+    {
+        threadLabels[i].Text = "파일 입력 대기";
+        fileCountLabels[i].Text = "Count: 0";
+
+        fileCounts[i].SuccessCount = 0;
+        fileCounts[i].FailureCount = 0;
+
+        int threadIndex = i;
+        conversionThreads[i] = new Thread(() => ProcessFiles(threadIndex));
+        conversionThreads[i].Start();
+        UpdateFileCountLabel(threadIndex);
+    }
+}
+*/      //레이블들 따로따로 관리하고 싶다면
 
 
         private void ProcessFiles(int threadIndex)
@@ -131,6 +152,7 @@ namespace checkFileContent
                             fileCounts[threadIndex].SuccessCount++;
                             UpdateFileCountLabel(threadIndex);  // 이거 변환프로세스 따라 값 바꿔야함
                             transformFile(filePath, threadIndex);
+                            successedFiles.Enqueue(new SuccessInfo(filePath, threadIndex));
                         }
                         else
                         {
@@ -508,7 +530,30 @@ namespace checkFileContent
             newForm2.ShowDialog();
         }
 
+        private void firstThreadButton_Click(object sender, EventArgs e)
+        {
+            showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 0);
+            newForm2.ShowDialog();
+        }
+
+        private void secondThreadButton_Click(object sender, EventArgs e)
+        {
+            showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 1);
+            newForm2.ShowDialog();
+        }
+
+        private void thirdThreadButton_Click(object sender, EventArgs e)
+        {
+            showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 2);
+            newForm2.ShowDialog();
+        }
+
         private void label1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
 
         }
