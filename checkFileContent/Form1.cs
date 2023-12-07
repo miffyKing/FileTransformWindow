@@ -176,22 +176,21 @@ namespace checkFileContent
             return newFilePath;
         }
 
-
         void transformFile(string file, int threadIndex)
         {
             Console.Write("Processing File: " + file + "\n");
             string extension = Path.GetExtension(file);
-            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
+
+            // "[TargetFileName] "을 제거한 파일명
+            string trimmedFileName = Path.GetFileNameWithoutExtension(file).Replace("[TargetFileName] ", "");
             string transformedFileName = "";
             byte[] fileData = File.ReadAllBytes(file);
-
-            //헤더 "[TargetFileName] " 을 제외한 파일 이름 만들기
 
             try
             {
                 if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
                 {
-                    transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".atxt");
+                    transformedFileName = Path.Combine("..\\DATAS\\transformed\\", trimmedFileName + ".atxt");
                     if (!File.Exists(transformedFileName))
                     {
                         Console.Write("no duplicate file name in transform area\n");
@@ -200,7 +199,7 @@ namespace checkFileContent
                 }
                 else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
                 {
-                    transformedFileName = Path.Combine("..\\DATAS\\transformed\\", fileNameWithoutExt + ".abin");
+                    transformedFileName = Path.Combine("..\\DATAS\\transformed\\", trimmedFileName + ".abin");
                     if (!File.Exists(transformedFileName))
                     {
                         Console.Write("no duplicate file name in transform area\n");
@@ -214,7 +213,6 @@ namespace checkFileContent
                 return;
             }
         }
-
 
         bool checkTransformFunction(string file, int threadIndex)
         {
