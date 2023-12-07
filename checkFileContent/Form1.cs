@@ -184,6 +184,9 @@ namespace checkFileContent
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
             string transformedFileName = "";
             byte[] fileData = File.ReadAllBytes(file);
+
+            //헤더 "[TargetFileName] " 을 제외한 파일 이름 만들기
+
             try
             {
                 if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
@@ -274,15 +277,31 @@ namespace checkFileContent
             string fileName = Path.GetFileName(file);
             string originalFilePath = Path.Combine("..\\DATAS\\original\\", fileName);
 
+            //여기에서, [TargetFileName] 헤더 정확하게 확인하고, 띄어쓰기는 하나만, 반드시 하나만 있는지 확인하기.
+            //또 [TargetFileName] .txt  이런거는 걸러내야하니까 유의하자.
+
             if (!fileName.StartsWith("[TargetFileName] "))
             {
                 fileCounts[threadIndex].FailureCount++;
                 Console.WriteLine($"File name error, transformation failed: {fileName}");
-                WriteLog(logFilePath, "File name error, transformation failed: " + fileName);
+                WriteLog(logFilePath, "File name error - Invalid Header, transformation failed: " + fileName);
                 File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
+
+            //로직 추가 - TargetFileName 으로 시작해도, 띄어쓰기가 뒤에 몇개 있는지 확인해야함.
+            string trimmedFileName = fileName.Replace("[TargetFileName] ", "");
+            if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".abin") || trimmedFileName.Equals(".atxt"))
+            {
+                fileCounts[threadIndex].FailureCount++;
+                Console.WriteLine($"Invalid file name format: {fileName}");
+                WriteLog(logFilePath, "File name error - valid Header, but other issues: " + fileName);
+                File.Move(file, originalFilePath);
+                UpdateFileCountLabel(threadIndex);
+                return false;
+            }
+
             WriteLog(logFilePath, "File Name check PASSED for " + fileName);
 
             return true;
