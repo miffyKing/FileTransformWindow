@@ -40,10 +40,13 @@ namespace checkFileContent
 
             RunGenerateFolder();                //폴더 생성
 
-            UpdateStatus("파일 변환 전");
+           
             InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
             
             InitializeThreadsAndLabels();       //UI 표시용 invoke
+            DeleteOldLogs();                    //오래된 로그파일 지우기
+            
+            UpdateStatus("파일 변환 전");
             this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);
         }
 
@@ -444,6 +447,36 @@ namespace checkFileContent
             catch (Exception ex)
             {
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void DeleteOldLogs()
+        {
+            string logPath = "..\\DATAS\\log\\";
+            string errorLogPath = "..\\DATAS\\log\\errorLog";
+
+            DeleteFileByDate(logPath, 1);
+            DeleteFileByDate(errorLogPath, 1);
+        }
+
+        private void DeleteFileByDate(string path, int days)
+        {
+            try
+            {
+                var files = Directory.GetFiles(path);
+                foreach (var file in files)
+                {
+                    FileInfo fileInfo = new FileInfo(file);
+                    if (fileInfo.CreationTime < DateTime.Now.AddDays(-1*days))
+                    {
+                        fileInfo.Delete();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting old log files: {ex.Message}");
             }
         }
 
