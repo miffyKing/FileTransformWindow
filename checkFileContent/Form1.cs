@@ -286,8 +286,8 @@ namespace checkFileContent
 
             //로직 추가 - TargetFileName 으로 시작해도, 띄어쓰기가 뒤에 몇개 있는지 확인해야함.
             string trimmedFileName = fileName.Replace("[TargetFileName] ", "");
-            string pattern = @"\(\d+\)\.(atxt|abin)$";  //(2).abin 처리
-            if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".abin") || trimmedFileName.Equals(".atxt") || Regex.IsMatch(trimmedFileName, pattern))
+            //string pattern = @"\(\d+\)\.(atxt|abin)$";  //(2).abin 처리
+            if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".abin") || trimmedFileName.Equals(".atxt"))
             {
                 fileCounts[threadIndex].FailureCount++;
                 WriteLog(logFilePath, "File name error - valid Header, but other issues: " + fileName);
@@ -295,6 +295,17 @@ namespace checkFileContent
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
+
+            //나중에 수정 제대로 해야함. 같은 파일이 10개 넘게 들어오면 이 로직을 통과하게 되어요.
+            if (trimmedFileName[0] == '(' && trimmedFileName[2] == ')' && trimmedFileName.Length == 8)
+            {
+                fileCounts[threadIndex].FailureCount++;
+                WriteLog(logFilePath, "File name error - valid Header, but other issues: " + fileName);
+                File.Move(file, originalFilePath);
+                UpdateFileCountLabel(threadIndex);
+                return false;
+            }
+
             WriteLog(logFilePath, "File Name check PASSED for " + fileName);
             return true;
         }
