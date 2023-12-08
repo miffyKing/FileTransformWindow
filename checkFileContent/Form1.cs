@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -80,7 +81,7 @@ namespace checkFileContent
                 threadLabels[i].Text = "파일 입력 대기";
 
                 fileCountLabels[i] = new Label();
-                fileCountLabels[i].Location = new System.Drawing.Point(450, 100 + (i * 70));
+                fileCountLabels[i].Location = new System.Drawing.Point(350, 100 + (i * 70));
                 fileCountLabels[i].Size = new System.Drawing.Size(200, 15);
                 fileCountLabels[i].Text = "Count: 0";
                 fileCountLabels[i].BringToFront();
@@ -108,7 +109,7 @@ namespace checkFileContent
                     filePath = checkDupFileName(filePath, originalPath);
 
                     Thread.Sleep(500);
-                    UpdateThreadLabel(threadIndex, "변환 시작" + Path.GetFileName(filePath));
+                    UpdateThreadLabel(threadIndex, "변환 시작");
                     Thread.Sleep(1000);
 
                     try
@@ -144,7 +145,9 @@ namespace checkFileContent
                         Thread.Sleep(1000);
                     }
                     UpdateThreadLabel(threadIndex, "변환 종료.");
-                    Thread.Sleep(10000);
+                    Thread.Sleep(1000);
+                    SleepTenSecond(threadIndex);
+                    //Thread.Sleep(10000);
                     UpdateThreadLabel(threadIndex, $"변환 파일 입력 대기");
                     // 중단 신호를 다시 확인
                     if (!isRunning)
@@ -159,6 +162,26 @@ namespace checkFileContent
             }
         }
 
+        private void SleepTenSecond(int threadIndex)
+        {
+            while (isRunning)
+            {
+
+                for (int i = 1; i <= 9; i++)
+                {
+                    string lineToUpdate = "휴식 중 ";
+                    string whatToAdd = "";
+                    for (int j = 0; j < i % 4; j++)
+                    {
+                        whatToAdd += ".";
+                    }
+
+                    UpdateThreadLabel(threadIndex, lineToUpdate + whatToAdd);
+                    Thread.Sleep(1000);
+
+                }
+            }
+        }
         private string checkDupFileName(string filePath, string originalDir)
         {
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
@@ -176,40 +199,42 @@ namespace checkFileContent
 
         void transformFile(string file, int threadIndex)
         {
-            Console.Write("Processing File: " + file + "\n");
-            string extension = Path.GetExtension(file);
+                Console.Write("Processing File: " + file + "\n");
+                string extension = Path.GetExtension(file);
 
-            // "[TargetFileName] "을 제거한 파일명
-            string trimmedFileName = Path.GetFileNameWithoutExtension(file).Replace("[TargetFileName] ", "");
-            string transformedFileName = "";
-            byte[] fileData = File.ReadAllBytes(file);
+                // "[TargetFileName] "을 제거한 파일명
+                string trimmedFileName = Path.GetFileNameWithoutExtension(file).Replace("[TargetFileName] ", "");
+                string transformedFileName = "";
+                byte[] fileData = File.ReadAllBytes(file);
 
-            try
-            {
-                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                try
                 {
-                    transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".atxt");
-                    if (!File.Exists(transformedFileName))
+                    if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.Write("no duplicate file name in transform area\n");
-                        File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(fileData), Encoding.UTF8);
+                        transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".atxt");
+                        if (!File.Exists(transformedFileName))
+                        {
+                            Console.Write("no duplicate file name in transform area\n");
+                            File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(fileData), Encoding.UTF8);
+                        }
+                    }
+                    else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                    {
+                        transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".abin");
+                        if (!File.Exists(transformedFileName))
+                        {
+                            Console.Write("no duplicate file name in transform area\n");
+                            File.WriteAllBytes(transformedFileName, fileData);
+                        }
                     }
                 }
-                else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                catch (Exception ex)
                 {
-                    transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".abin");
-                    if (!File.Exists(transformedFileName))
-                    {
-                        Console.Write("no duplicate file name in transform area\n");
-                        File.WriteAllBytes(transformedFileName, fileData);
-                    }
+                    Console.WriteLine("Error in transformFile: " + ex.Message);
+                    return;
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error in transformFile: " + ex.Message);
-                return;
-            }
+
+            
         }
 
         bool checkTransformFunction(string file, int threadIndex)
@@ -377,45 +402,66 @@ namespace checkFileContent
 
         private void UpdateThreadLabel(int threadIndex, string text)
         {
-            if (IsHandleCreated && !IsDisposed && !Disposing)
+            try
             {
-                if (threadLabels[threadIndex].InvokeRequired)
+                if (IsHandleCreated && !IsDisposed && !Disposing)
                 {
-                    threadLabels[threadIndex].Invoke(new Action(() => threadLabels[threadIndex].Text = text));
+                    if (threadLabels[threadIndex].InvokeRequired)
+                    {
+                        threadLabels[threadIndex].Invoke(new Action(() => threadLabels[threadIndex].Text = text));
+                    }
+                    else
+                    {
+                        threadLabels[threadIndex].Text = text;
+                    }
                 }
-                else
-                {
-                    threadLabels[threadIndex].Text = text;
-                }
+            }
+            catch (InvalidAsynchronousStateException)
+            {
+                // 예외 처리 로직, 예를 들어 로깅을 수행하거나 무시할 수 있습니다.
             }
         }
 
         private void UpdateFileCountLabel(int threadIndex)
         {
-            string text = $"Success: {fileCounts[threadIndex].SuccessCount}, Failure: {fileCounts[threadIndex].FailureCount}";
-            // 폼의 핸들이 생성되었으며 폼이 Dispose되지 않았는지 확인
-            if (IsHandleCreated && !IsDisposed && !Disposing)
+            try
             {
-                if (fileCountLabels[threadIndex].InvokeRequired)
+                string text = $"Success: {fileCounts[threadIndex].SuccessCount}, Failure: {fileCounts[threadIndex].FailureCount}";
+                // 폼의 핸들이 생성되었으며 폼이 Dispose되지 않았는지 확인
+                if (IsHandleCreated && !IsDisposed && !Disposing)
                 {
-                    fileCountLabels[threadIndex].Invoke(new Action(() => fileCountLabels[threadIndex].Text = text));
+                    if (fileCountLabels[threadIndex].InvokeRequired)
+                    {
+                        fileCountLabels[threadIndex].Invoke(new Action(() => fileCountLabels[threadIndex].Text = text));
+                    }
+                    else
+                    {
+                        fileCountLabels[threadIndex].Text = text;
+                    }
                 }
-                else
-                {
-                    fileCountLabels[threadIndex].Text = text;
-                }
+            }
+            catch (InvalidAsynchronousStateException)
+            {
+                // 예외 처리 로직, 예를 들어 로깅을 수행하거나 무시할 수 있습니다.
+                // 예외가 발생했을 때 수행할 작업을 여기에 추가합니다.
             }
         }
 
         private void UpdateStatus(string status)
         {
-            if (labelStatus.InvokeRequired)
+            try
             {
-                labelStatus.Invoke(new Action(() => labelStatus.Text = status));
+                if (labelStatus.InvokeRequired)
+                {
+                    labelStatus.Invoke(new Action(() => labelStatus.Text = status));
+                }
+                else
+                {
+                    labelStatus.Text = status;
+                }
             }
-            else
+            catch (InvalidAsynchronousStateException)
             {
-                labelStatus.Text = status;
             }
         }
 
@@ -480,14 +526,21 @@ namespace checkFileContent
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            isRunning = false;
-
-            foreach (Thread thread in conversionThreads)
+            try
             {
-                if (thread != null && thread.IsAlive)
+                isRunning = false;
+
+                foreach (Thread thread in conversionThreads)
                 {
-                    thread.Join(1000);
+                    if (thread != null && thread.IsAlive)
+                    {
+                        thread.Join(1000); // 기다릴 시간을 1000 밀리초(1초)로 설정
+                    }
                 }
+            }
+            catch (InvalidAsynchronousStateException ex)
+            {
+                MessageBox.Show("애플리케이션이 안전하게 종료되지 못했습니다. 잠시 후 다시 시도.\n" + ex.Message, "종료 오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
         private void label1_Click(object sender, EventArgs e)

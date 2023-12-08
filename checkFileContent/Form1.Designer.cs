@@ -36,13 +36,20 @@
             this.button2 = new System.Windows.Forms.Button();
             this.DirectUpload = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel3.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // errorLogCheck
             // 
             this.errorLogCheck.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.errorLogCheck.Location = new System.Drawing.Point(12, 183);
+            this.errorLogCheck.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.errorLogCheck.FlatAppearance.BorderSize = 5;
+            this.errorLogCheck.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.errorLogCheck.Location = new System.Drawing.Point(23, 191);
             this.errorLogCheck.Name = "errorLogCheck";
             this.errorLogCheck.Size = new System.Drawing.Size(104, 63);
             this.errorLogCheck.TabIndex = 1;
@@ -54,10 +61,11 @@
             // 
             this.labelStatus.AutoSize = true;
             this.labelStatus.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.labelStatus.Font = new System.Drawing.Font("굴림", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.labelStatus.Location = new System.Drawing.Point(403, 32);
+            this.labelStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.labelStatus.Font = new System.Drawing.Font("현대하모니 L", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.labelStatus.Location = new System.Drawing.Point(374, 32);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(250, 40);
+            this.labelStatus.Size = new System.Drawing.Size(174, 32);
             this.labelStatus.TabIndex = 2;
             this.labelStatus.Text = "상태 표시 창";
             this.labelStatus.Click += new System.EventHandler(this.label1_Click_1);
@@ -65,7 +73,8 @@
             // firstThreadStatus
             // 
             this.firstThreadStatus.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.firstThreadStatus.Location = new System.Drawing.Point(897, 130);
+            this.firstThreadStatus.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.firstThreadStatus.Location = new System.Drawing.Point(755, 130);
             this.firstThreadStatus.Name = "firstThreadStatus";
             this.firstThreadStatus.Size = new System.Drawing.Size(148, 53);
             this.firstThreadStatus.TabIndex = 6;
@@ -76,7 +85,8 @@
             // button1
             // 
             this.button1.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.button1.Location = new System.Drawing.Point(897, 241);
+            this.button1.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button1.Location = new System.Drawing.Point(755, 241);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(148, 53);
             this.button1.TabIndex = 7;
@@ -87,7 +97,8 @@
             // button2
             // 
             this.button2.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.button2.Location = new System.Drawing.Point(897, 346);
+            this.button2.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button2.Location = new System.Drawing.Point(755, 346);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(148, 53);
             this.button2.TabIndex = 8;
@@ -99,8 +110,9 @@
             // 
             this.DirectUpload.BackColor = System.Drawing.Color.LightSkyBlue;
             this.DirectUpload.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("DirectUpload.BackgroundImage")));
+            this.DirectUpload.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.DirectUpload.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.DirectUpload.Location = new System.Drawing.Point(12, 289);
+            this.DirectUpload.Location = new System.Drawing.Point(23, 301);
             this.DirectUpload.Name = "DirectUpload";
             this.DirectUpload.Size = new System.Drawing.Size(104, 72);
             this.DirectUpload.TabIndex = 9;
@@ -111,24 +123,46 @@
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.DarkSlateGray;
-            this.panel3.Location = new System.Drawing.Point(190, 32);
+            this.panel3.Controls.Add(this.panel2);
+            this.panel3.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.panel3.Location = new System.Drawing.Point(173, 32);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1, 492);
+            this.panel3.Size = new System.Drawing.Size(3, 420);
             this.panel3.TabIndex = 10;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.DarkSlateGray;
+            this.panel2.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(3, 420);
+            this.panel2.TabIndex = 11;
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.DarkSlateGray;
-            this.panel1.Location = new System.Drawing.Point(879, 32);
+            this.panel1.Controls.Add(this.panel4);
+            this.panel1.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.panel1.Location = new System.Drawing.Point(733, 32);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1, 492);
-            this.panel1.TabIndex = 11;
+            this.panel1.Size = new System.Drawing.Size(3, 420);
+            this.panel1.TabIndex = 12;
+            // 
+            // panel4
+            // 
+            this.panel4.BackColor = System.Drawing.Color.DarkSlateGray;
+            this.panel4.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.panel4.Location = new System.Drawing.Point(0, 0);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(3, 420);
+            this.panel4.TabIndex = 11;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1056, 550);
+            this.ClientSize = new System.Drawing.Size(919, 507);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.DirectUpload);
@@ -140,6 +174,8 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.panel3.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -153,7 +189,9 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button DirectUpload;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel4;
     }
 }
 
