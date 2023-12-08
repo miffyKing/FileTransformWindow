@@ -23,11 +23,10 @@ namespace checkFileContent
         private FileSystemWatcher watcher;
         private ConcurrentQueue<string> fileList = new ConcurrentQueue<string>();
         private Thread[] conversionThreads = new Thread[3];
-
         private Label[] threadLabels = new Label[3];
         private Label[] fileCountLabels = new Label[3];
-
         private bool isRunning = true; // 스레드 실행 제어를 위한 플래그
+        
         private FileProcessCount[] fileCounts = new FileProcessCount[3];
         private ConcurrentQueue<FailureInfo> failedFiles = new ConcurrentQueue<FailureInfo>();         //실패한 파일 모을 배열 -> 이걸 어떻게 표로 나타낼 수 있다면 UI 완성임.
         private ConcurrentQueue<SuccessInfo> successedFiles = new ConcurrentQueue<SuccessInfo>();
@@ -37,7 +36,7 @@ namespace checkFileContent
         private string INPUTROUTE = "..\\DATAS\\inputRoute\\";
         private string LOGPATH = "..\\DATAS\\log\\";
         private string ERRORPATH = "..\\DATAS\\log\\errorLog";
-          
+
         public Form1()
         {
             InitializeComponent();
@@ -164,8 +163,6 @@ namespace checkFileContent
 
         private void SleepTenSecond(int threadIndex)
         {
-            while (isRunning)
-            {
 
                 for (int i = 1; i <= 9; i++)
                 {
@@ -180,7 +177,6 @@ namespace checkFileContent
                     Thread.Sleep(1000);
 
                 }
-            }
         }
         private string checkDupFileName(string filePath, string originalDir)
         {
@@ -596,6 +592,27 @@ namespace checkFileContent
                 catch (IOException ioEx)
                 {
                     MessageBox.Show("An error occurred: " + ioEx.Message);
+                }
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                folderBrowserDialog.Description = "Select the Original Folder";
+
+                // 기본 경로 설정 (옵션)
+                folderBrowserDialog.SelectedPath = ORIGINALPATH;
+
+                // 폴더 대화 상자 표시
+                DialogResult result = folderBrowserDialog.ShowDialog();
+
+                // 사용자가 OK를 눌렀는지 확인
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    // originalPath 변수에 선택된 경로 할당
+                    ORIGINALPATH = folderBrowserDialog.SelectedPath;
                 }
             }
         }
