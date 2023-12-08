@@ -34,8 +34,9 @@ namespace checkFileContent
         private string ORIGINALPATH = "..\\DATAS\\original\\";
         private string TRANSFORMEDPATH = "..\\DATAS\\transformed\\";
         private string INPUTROUTE = "..\\DATAS\\inputRoute\\";
-        private string LOGPATH = "..\\DATAS\\log\\";
-        private string ERRORPATH = "..\\DATAS\\log\\errorLog";
+        private static string LOGPATH = "..\\DATAS\\log\\";
+        //private string ERRORPATH = "..\\DATAS\\log\\errorLog";
+        private static string ERRORPATH = Path.Combine(LOGPATH, "errorLog");
 
         public Form1()
         {
@@ -613,6 +614,69 @@ namespace checkFileContent
                 {
                     // originalPath 변수에 선택된 경로 할당
                     ORIGINALPATH = folderBrowserDialog.SelectedPath;
+                }
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                folderBrowserDialog.Description = "Select the transformed Folder";
+
+                // 기본 경로 설정 (옵션)
+                folderBrowserDialog.SelectedPath = TRANSFORMEDPATH;
+
+                // 폴더 대화 상자 표시
+                DialogResult result = folderBrowserDialog.ShowDialog();
+
+                // 사용자가 OK를 눌렀는지 확인
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    // originalPath 변수에 선택된 경로 할당
+                    TRANSFORMEDPATH = folderBrowserDialog.SelectedPath;
+                }
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                folderBrowserDialog.Description = "Select the input Folder";
+
+                // 기본 경로 설정 (옵션)
+                folderBrowserDialog.SelectedPath =  INPUTROUTE;
+
+                // 폴더 대화 상자 표시
+                DialogResult result = folderBrowserDialog.ShowDialog();
+
+                // 사용자가 OK를 눌렀는지 확인
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    // originalPath 변수에 선택된 경로 할당
+                    INPUTROUTE = folderBrowserDialog.SelectedPath;
+                }
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                folderBrowserDialog.Description = "Select the log Folder";
+
+                // 기본 경로 설정 (옵션)
+                folderBrowserDialog.SelectedPath = LOGPATH;
+
+                // 폴더 대화 상자 표시
+                DialogResult result = folderBrowserDialog.ShowDialog();
+
+                // 사용자가 OK를 눌렀는지 확인
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    // originalPath 변수에 선택된 경로 할당
+                    LOGPATH = folderBrowserDialog.SelectedPath;
                 }
             }
         }
