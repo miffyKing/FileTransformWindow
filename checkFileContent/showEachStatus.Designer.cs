@@ -40,6 +40,7 @@
             // 
             this.FailureDataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.FailureDataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.FailureDataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.FailureDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.FailureDataGridView1.Location = new System.Drawing.Point(110, 400);
             this.FailureDataGridView1.Name = "FailureDataGridView1";
@@ -52,6 +53,7 @@
             // 
             this.SuccessDataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.SuccessDataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.SuccessDataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.SuccessDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.SuccessDataGridView1.Location = new System.Drawing.Point(110, 65);
             this.SuccessDataGridView1.Name = "SuccessDataGridView1";
@@ -63,6 +65,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.LightCyan;
             this.label1.Font = new System.Drawing.Font("굴림", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label1.Location = new System.Drawing.Point(107, 34);
             this.label1.Name = "label1";
@@ -73,6 +76,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.LightCyan;
             this.label2.Font = new System.Drawing.Font("굴림", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label2.Location = new System.Drawing.Point(107, 364);
             this.label2.Name = "label2";

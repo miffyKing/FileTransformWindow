@@ -1,15 +1,17 @@
-﻿using System;
+﻿using MetroFramework.Forms;     //이쁘게 보이게 하고싶습니다.
+
+using System;
 using System.Collections.Concurrent;
-using System.Data;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace checkFileContent
 {
 
-    public partial class Form1 : Form
+    public partial class Form1 : MetroForm
     {
         public class FileProcessCount
         {
@@ -26,26 +28,27 @@ namespace checkFileContent
 
         private bool isRunning = true; // 스레드 실행 제어를 위한 플래그
         private FileProcessCount[] fileCounts = new FileProcessCount[3];
-        //실패한 파일 모을 배열 -> 이걸 어떻게 표로 나타낼 수 있다면 UI 완성임.
-        private ConcurrentQueue<FailureInfo> failedFiles = new ConcurrentQueue<FailureInfo>();
+        private ConcurrentQueue<FailureInfo> failedFiles = new ConcurrentQueue<FailureInfo>();         //실패한 파일 모을 배열 -> 이걸 어떻게 표로 나타낼 수 있다면 UI 완성임.
         private ConcurrentQueue<SuccessInfo> successedFiles = new ConcurrentQueue<SuccessInfo>();
 
+        private string ORIGINALPATH = "..\\DATAS\\original\\";
+        private string TRANSFORMEDPATH = "..\\DATAS\\transformed\\";
+        private string INPUTROUTE = "..\\DATAS\\inputRoute\\";
+        private string LOGPATH = "..\\DATAS\\log\\";
+        private string ERRORPATH = "..\\DATAS\\log\\errorLog";
+          
         public Form1()
         {
             InitializeComponent();
-
             for (int i = 0; i < 3; i++)
             {
                 fileCounts[i] = new FileProcessCount { SuccessCount = 0, FailureCount = 0 };
             }
 
             RunGenerateFolder();                //폴더 생성
-           
             InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
-            
             InitializeThreadsAndLabels();       //UI 표시용 invoke
             DeleteOldLogs();                    //오래된 로그파일 지우기
-            
             UpdateStatus("파일 변환 전");
             this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);
         }
@@ -53,7 +56,7 @@ namespace checkFileContent
         private void InitializeFileSystemWatcher()
         {
             watcher = new FileSystemWatcher();
-            watcher.Path = Path.GetFullPath(@"..\\DATAS\\inputRoute");
+            watcher.Path = Path.GetFullPath(@INPUTROUTE);
             watcher.Filter = "*.*";
             watcher.Created += OnCreated;
             watcher.EnableRaisingEvents = true;
@@ -70,14 +73,14 @@ namespace checkFileContent
             for (int i = 0; i < 3; i++)
             {
                 threadLabels[i] = new Label();
-                threadLabels[i].Location = new System.Drawing.Point(200, 100 + (i * 50));
+                threadLabels[i].Location = new System.Drawing.Point(150, 100 + (i * 70));
                 threadLabels[i].Size = new System.Drawing.Size(200, 15);
                 this.Controls.Add(threadLabels[i]);
                 threadLabels[i].BringToFront();
                 threadLabels[i].Text = "파일 입력 대기";
 
                 fileCountLabels[i] = new Label();
-                fileCountLabels[i].Location = new System.Drawing.Point(450, 100 + (i * 50));
+                fileCountLabels[i].Location = new System.Drawing.Point(450, 100 + (i * 70));
                 fileCountLabels[i].Size = new System.Drawing.Size(200, 15);
                 fileCountLabels[i].Text = "Count: 0";
                 fileCountLabels[i].BringToFront();
@@ -93,55 +96,25 @@ namespace checkFileContent
             }
         }
 
-        /*
-         private void InitializeThreadsAndLabels()
-{
-    Label[] threadLabels = { labelThread1, labelThread2, labelThread3 };
-    Label[] fileCountLabels = { labelCount1, labelCount2, labelCount3 };
-
-    for (int i = 0; i < 3; i++)
-    {
-        threadLabels[i].Text = "파일 입력 대기";
-        fileCountLabels[i].Text = "Count: 0";
-
-        fileCounts[i].SuccessCount = 0;
-        fileCounts[i].FailureCount = 0;
-
-        int threadIndex = i;
-        conversionThreads[i] = new Thread(() => ProcessFiles(threadIndex));
-        conversionThreads[i].Start();
-        UpdateFileCountLabel(threadIndex);
-    }
-}
-*/      //레이블들 따로따로 관리하고 싶다면
-
-
         private void ProcessFiles(int threadIndex)
         {
             while (isRunning)
             {
                 if (fileList.TryDequeue(out string filePath))
                 {
-                   /* if (fileList.IsEmpty) // fileList가 비어있는 경우
-                    {
-                        UpdateStatus("파일 변환 완료");
-                    }*/
                     UpdateFileCountLabel(threadIndex);
-                    string originalPath = "..\\DATAS\\original\\";
+                    string originalPath = ORIGINALPATH;
                     string prevName = filePath;
-                    //bool nameChangeFlag = false;
                     filePath = checkDupFileName(filePath, originalPath);
-                   
 
-                    // 파일명 바뀌었음을 로그파일에 적고싶은데 어떻게 해야할까 - 그냥 flag 달자.
-
-                    UpdateThreadLabel(threadIndex, "변환 시작" );
+                    Thread.Sleep(500);
+                    UpdateThreadLabel(threadIndex, "변환 시작" + Path.GetFileName(filePath));
                     Thread.Sleep(1000);
 
                     try
                     {
-                        string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(filePath));              
-                        string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(filePath) + ".txt");
+                        string originalFilePath = Path.Combine(ORIGINALPATH, Path.GetFileName(filePath));              
+                        string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(filePath) + ".txt");
                         WriteLog(logFilePath, "Thread index :" + threadIndex + " Starts transrform");
                         if (prevName != filePath)
                         {
@@ -158,7 +131,7 @@ namespace checkFileContent
                         {
                             string errorMessage = "File failed to transform, move to Error log folder";
                             WriteLog(logFilePath, errorMessage);
-                            string errorLogPath = Path.Combine("..\\DATAS\\log\\errorLog\\", "ERROR_" + Path.GetFileName(logFilePath));
+                            string errorLogPath = Path.Combine(ERRORPATH + "\\", "ERROR_" + Path.GetFileName(logFilePath));
                             File.Move(logFilePath, errorLogPath);
                             UpdateThreadLabel(threadIndex, "변환 실패");
                             Thread.Sleep(1000);
@@ -215,7 +188,7 @@ namespace checkFileContent
             {
                 if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
                 {
-                    transformedFileName = Path.Combine("..\\DATAS\\transformed\\", trimmedFileName + ".atxt");
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".atxt");
                     if (!File.Exists(transformedFileName))
                     {
                         Console.Write("no duplicate file name in transform area\n");
@@ -224,7 +197,7 @@ namespace checkFileContent
                 }
                 else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
                 {
-                    transformedFileName = Path.Combine("..\\DATAS\\transformed\\", trimmedFileName + ".abin");
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".abin");
                     if (!File.Exists(transformedFileName))
                     {
                         Console.Write("no duplicate file name in transform area\n");
@@ -271,9 +244,9 @@ namespace checkFileContent
 
         bool checkExtension(string file, int threadIndex)
         {
-            string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
+            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
             string extension = Path.GetExtension(file);
-            string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
+            string originalFilePath = Path.Combine(ORIGINALPATH, Path.GetFileName(file));
 
             if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
             {
@@ -296,17 +269,15 @@ namespace checkFileContent
 
         bool checkFileName(string file, int threadIndex)
         {
-            string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
+            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
             string fileName = Path.GetFileName(file);
-            string originalFilePath = Path.Combine("..\\DATAS\\original\\", fileName);
+            string originalFilePath = Path.Combine(ORIGINALPATH, fileName);
 
             //여기에서, [TargetFileName] 헤더 정확하게 확인하고, 띄어쓰기는 하나만, 반드시 하나만 있는지 확인하기.
             //또 [TargetFileName] .txt  이런거는 걸러내야하니까 유의하자.
-
             if (!fileName.StartsWith("[TargetFileName] "))
             {
                 fileCounts[threadIndex].FailureCount++;
-                Console.WriteLine($"File name error, transformation failed: {fileName}");
                 WriteLog(logFilePath, "File name error - Invalid Header, transformation failed: " + fileName);
                 File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
                 UpdateFileCountLabel(threadIndex);
@@ -315,33 +286,29 @@ namespace checkFileContent
 
             //로직 추가 - TargetFileName 으로 시작해도, 띄어쓰기가 뒤에 몇개 있는지 확인해야함.
             string trimmedFileName = fileName.Replace("[TargetFileName] ", "");
-            if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".abin") || trimmedFileName.Equals(".atxt"))
+            string pattern = @"\(\d+\)\.(atxt|abin)$";  //(2).abin 처리
+            if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".abin") || trimmedFileName.Equals(".atxt") || Regex.IsMatch(trimmedFileName, pattern))
             {
                 fileCounts[threadIndex].FailureCount++;
-                Console.WriteLine($"Invalid file name format: {fileName}");
                 WriteLog(logFilePath, "File name error - valid Header, but other issues: " + fileName);
                 File.Move(file, originalFilePath);
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
-
             WriteLog(logFilePath, "File Name check PASSED for " + fileName);
-
             return true;
         }
 
         bool checkFileSize(string file, int threadIndex)
         {
-            string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
+            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
             string fileName = Path.GetFileName(file);
-            string originalFilePath = Path.Combine("..\\DATAS\\original\\", fileName);
+            string originalFilePath = Path.Combine(ORIGINALPATH, fileName);
             FileInfo fileInfo = new FileInfo(file);
 
-            //length로 파일 크기 바이트 단위 확인 가능
             if (fileInfo.Length < 18)
             {
                 fileCounts[threadIndex].FailureCount++;
-                Console.WriteLine($"File Size error, small then 18 byte, transformation failed: {fileName}");
                 WriteLog(logFilePath, "File Size error, small then 18 byte, transformation failed" + fileName);
                 File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
                 UpdateFileCountLabel(threadIndex);
@@ -353,20 +320,18 @@ namespace checkFileContent
 
         bool checkFileHeader(string file, int threadIndex)
         {
-            string logFilePath = Path.Combine("..\\DATAS\\log\\", "log_" + Path.GetFileName(file) + ".txt");
+            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
             string extension = Path.GetExtension(file);
-            string originalFilePath = Path.Combine("..\\DATAS\\original\\", Path.GetFileName(file));
+            string originalFilePath = Path.Combine(ORIGINALPATH , Path.GetFileName(file));
             const string headerToCheck = "[ATRANS] ";
 
             try
             {
                 byte[] fileData = File.ReadAllBytes(file);
-
                 if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase) || extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
                 {
                     string fileContent = Encoding.UTF8.GetString(fileData);
                     string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
                     if (lines.Length > 0 && lines[0].StartsWith(headerToCheck))
                     {
                         WriteLog(logFilePath, "File Header correct, it starts with [ATRANS]  " + Path.GetFileName(file));
@@ -475,8 +440,8 @@ namespace checkFileContent
 
         private void DeleteOldLogs()
         {
-            string logPath = "..\\DATAS\\log\\";
-            string errorLogPath = "..\\DATAS\\log\\errorLog";
+            string logPath = LOGPATH;
+            string errorLogPath =ERRORPATH;
 
             DeleteFileByDate(logPath, 1);
             DeleteFileByDate(errorLogPath, 1);
@@ -513,49 +478,38 @@ namespace checkFileContent
                     thread.Join(1000);
                 }
             }
-
         }
-
         private void label1_Click(object sender, EventArgs e)
         {
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
         }
-
         private void errorLogCheck_Click(object sender, EventArgs e)
         {
             showErrorList newForm2 = new showErrorList(failedFiles);
             newForm2.ShowDialog();
         }
-
         private void firstThreadButton_Click(object sender, EventArgs e)
         {
             showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 0);
             newForm2.ShowDialog();
         }
-
         private void secondThreadButton_Click(object sender, EventArgs e)
         {
             showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 1);
             newForm2.ShowDialog();
         }
-
         private void thirdThreadButton_Click(object sender, EventArgs e)
         {
             showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 2);
             newForm2.ShowDialog();
         }
-
         private void label1_Click_1(object sender, EventArgs e)
         {
-
         }
-
         private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-
         }
 
         private void DirectUpload_Click(object sender, EventArgs e)
@@ -568,22 +522,15 @@ namespace checkFileContent
             // 파일 탐색기를 열고 사용자가 파일을 선택하면
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                // 선택된 파일의 전체 경로
                 string selectedFilePath = openFileDialog.FileName;
-                // 복사될 경로 및 파일 이름 설정
-                string destinationPath = Path.Combine("..\\DATAS\\inputRoute\\", Path.GetFileName(selectedFilePath));
-
+                string destinationPath = Path.Combine(INPUTROUTE, Path.GetFileName(selectedFilePath));
                 try
                 {
-                    // 파일을 목적지 경로로 복사 (덮어쓰기 금지)
                     File.Copy(selectedFilePath, destinationPath, false);
-
-                    // 성공 메시지 (옵션)
                     MessageBox.Show("File uploaded successfully.");
                 }
                 catch (IOException ioEx)
                 {
-                    // 파일이 이미 존재하는 경우 또는 다른 IO 예외 처리
                     MessageBox.Show("An error occurred: " + ioEx.Message);
                 }
             }

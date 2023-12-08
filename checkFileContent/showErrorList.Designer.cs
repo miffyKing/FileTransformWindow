@@ -41,6 +41,7 @@
             // 
             this.failureDataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.failureDataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.failureDataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.failureDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.failureDataGridView1.Location = new System.Drawing.Point(12, 135);
             this.failureDataGridView1.Name = "failureDataGridView1";
@@ -52,18 +53,21 @@
             // 
             // errorLogCheck
             // 
-            this.errorLogCheck.Location = new System.Drawing.Point(102, 789);
+            this.errorLogCheck.BackColor = System.Drawing.Color.LightCyan;
+            this.errorLogCheck.Font = new System.Drawing.Font("굴림", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.errorLogCheck.Location = new System.Drawing.Point(100, 727);
             this.errorLogCheck.Name = "errorLogCheck";
-            this.errorLogCheck.Size = new System.Drawing.Size(151, 83);
+            this.errorLogCheck.Size = new System.Drawing.Size(174, 83);
             this.errorLogCheck.TabIndex = 1;
             this.errorLogCheck.Text = "로그 폴더 열기";
-            this.errorLogCheck.UseVisualStyleBackColor = true;
+            this.errorLogCheck.UseVisualStyleBackColor = false;
             this.errorLogCheck.Click += new System.EventHandler(this.errorLogCheck_Click);
             // 
             // failureDataGridView2
             // 
             this.failureDataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.failureDataGridView2.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.failureDataGridView2.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.failureDataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.failureDataGridView2.Location = new System.Drawing.Point(576, 135);
             this.failureDataGridView2.Name = "failureDataGridView2";
@@ -77,6 +81,7 @@
             // 
             this.failureDataGridView3.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.failureDataGridView3.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.failureDataGridView3.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.failureDataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.failureDataGridView3.Location = new System.Drawing.Point(1129, 135);
             this.failureDataGridView3.Name = "failureDataGridView3";
