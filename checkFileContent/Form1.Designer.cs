@@ -44,8 +44,17 @@
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.originalPathlabel = new System.Windows.Forms.Label();
+            this.transformedPathLabel = new System.Windows.Forms.Label();
+            this.inputPathLabel = new System.Windows.Forms.Label();
+            this.logPathLabel = new System.Windows.Forms.Label();
             this.panel3.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.panel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // errorLogCheck
@@ -138,6 +147,7 @@
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.DarkSlateGray;
+            this.panel2.Controls.Add(this.panel5);
             this.panel2.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
@@ -165,7 +175,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(32, 496);
+            this.button3.Location = new System.Drawing.Point(16, 479);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(144, 48);
             this.button3.TabIndex = 13;
@@ -175,7 +185,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(32, 572);
+            this.button4.Location = new System.Drawing.Point(16, 555);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(144, 48);
             this.button4.TabIndex = 14;
@@ -185,7 +195,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(32, 647);
+            this.button5.Location = new System.Drawing.Point(16, 630);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(144, 48);
             this.button5.TabIndex = 15;
@@ -195,7 +205,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(32, 722);
+            this.button6.Location = new System.Drawing.Point(16, 705);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(144, 48);
             this.button6.TabIndex = 16;
@@ -203,11 +213,81 @@
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
+            // panel5
+            // 
+            this.panel5.BackColor = System.Drawing.Color.DarkSlateGray;
+            this.panel5.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.panel5.Location = new System.Drawing.Point(24, 410);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(338, 10);
+            this.panel5.TabIndex = 12;
+            // 
+            // panel6
+            // 
+            this.panel6.BackColor = System.Drawing.Color.DarkSlateGray;
+            this.panel6.Controls.Add(this.panel7);
+            this.panel6.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.panel6.Location = new System.Drawing.Point(23, 458);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(877, 3);
+            this.panel6.TabIndex = 13;
+            // 
+            // panel7
+            // 
+            this.panel7.BackColor = System.Drawing.Color.DarkSlateGray;
+            this.panel7.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.panel7.Location = new System.Drawing.Point(24, 410);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(338, 10);
+            this.panel7.TabIndex = 12;
+            // 
+            // originalPathlabel
+            // 
+            this.originalPathlabel.AutoSize = true;
+            this.originalPathlabel.Location = new System.Drawing.Point(182, 485);
+            this.originalPathlabel.Name = "originalPathlabel";
+            this.originalPathlabel.Size = new System.Drawing.Size(54, 18);
+            this.originalPathlabel.TabIndex = 18;
+            this.originalPathlabel.Text = "label2";
+            this.originalPathlabel.Click += new System.EventHandler(this.label2_Click);
+            // 
+            // transformedPathLabel
+            // 
+            this.transformedPathLabel.AutoSize = true;
+            this.transformedPathLabel.Location = new System.Drawing.Point(182, 570);
+            this.transformedPathLabel.Name = "transformedPathLabel";
+            this.transformedPathLabel.Size = new System.Drawing.Size(54, 18);
+            this.transformedPathLabel.TabIndex = 19;
+            this.transformedPathLabel.Text = "label2";
+            // 
+            // inputPathLabel
+            // 
+            this.inputPathLabel.AutoSize = true;
+            this.inputPathLabel.Location = new System.Drawing.Point(182, 645);
+            this.inputPathLabel.Name = "inputPathLabel";
+            this.inputPathLabel.Size = new System.Drawing.Size(54, 18);
+            this.inputPathLabel.TabIndex = 20;
+            this.inputPathLabel.Text = "label2";
+            // 
+            // logPathLabel
+            // 
+            this.logPathLabel.AutoSize = true;
+            this.logPathLabel.Location = new System.Drawing.Point(182, 720);
+            this.logPathLabel.Name = "logPathLabel";
+            this.logPathLabel.Size = new System.Drawing.Size(54, 18);
+            this.logPathLabel.TabIndex = 21;
+            this.logPathLabel.Text = "label2";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(919, 793);
+            this.Controls.Add(this.logPathLabel);
+            this.Controls.Add(this.inputPathLabel);
+            this.Controls.Add(this.transformedPathLabel);
+            this.Controls.Add(this.originalPathlabel);
+            this.Controls.Add(this.panel6);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
@@ -224,7 +304,9 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel3.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.panel6.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -246,6 +328,13 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.Label originalPathlabel;
+        private System.Windows.Forms.Label transformedPathLabel;
+        private System.Windows.Forms.Label inputPathLabel;
+        private System.Windows.Forms.Label logPathLabel;
     }
 }
 

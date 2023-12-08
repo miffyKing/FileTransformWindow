@@ -51,6 +51,7 @@ namespace checkFileContent
             InitializeThreadsAndLabels();       //UI 표시용 invoke
             DeleteOldLogs();                    //오래된 로그파일 지우기
             UpdateStatus("파일 변환 전");
+            UpdatePathLabel();
             this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);
         }
 
@@ -61,6 +62,14 @@ namespace checkFileContent
             watcher.Filter = "*.*";
             watcher.Created += OnCreated;
             watcher.EnableRaisingEvents = true;
+        }
+
+        private void UpdatePathLabel()
+        {
+            originalPathlabel.Text = ORIGINALPATH;
+            transformedPathLabel.Text = TRANSFORMEDPATH;
+            logPathLabel.Text = LOGPATH;
+            inputPathLabel.Text = INPUTROUTE;
         }
 
         private void OnCreated(object sender, FileSystemEventArgs e)
@@ -83,7 +92,7 @@ namespace checkFileContent
                 fileCountLabels[i] = new Label();
                 fileCountLabels[i].Location = new System.Drawing.Point(350, 100 + (i * 70));
                 fileCountLabels[i].Size = new System.Drawing.Size(200, 15);
-                fileCountLabels[i].Text = "Count: 0";
+                fileCountLabels[i].Text = "Success: 0  Failure: 0";
                 fileCountLabels[i].BringToFront();
                 this.Controls.Add(fileCountLabels[i]);
 
@@ -614,6 +623,7 @@ namespace checkFileContent
                 {
                     // originalPath 변수에 선택된 경로 할당
                     ORIGINALPATH = folderBrowserDialog.SelectedPath;
+                    UpdatePathLabel();
                 }
             }
         }
@@ -635,6 +645,7 @@ namespace checkFileContent
                 {
                     // originalPath 변수에 선택된 경로 할당
                     TRANSFORMEDPATH = folderBrowserDialog.SelectedPath;
+                    UpdatePathLabel();
                 }
             }
         }
@@ -656,6 +667,8 @@ namespace checkFileContent
                 {
                     // originalPath 변수에 선택된 경로 할당
                     INPUTROUTE = folderBrowserDialog.SelectedPath;
+                    InitializeFileSystemWatcher();
+                    UpdatePathLabel();
                 }
             }
         }
@@ -677,8 +690,14 @@ namespace checkFileContent
                 {
                     // originalPath 변수에 선택된 경로 할당
                     LOGPATH = folderBrowserDialog.SelectedPath;
+                    UpdatePathLabel();
                 }
             }
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
