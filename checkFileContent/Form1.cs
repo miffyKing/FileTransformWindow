@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
+
 namespace checkFileContent
 {
 
@@ -30,12 +31,12 @@ namespace checkFileContent
         private FileProcessCount[] fileCounts = new FileProcessCount[3];
         private ConcurrentQueue<FailureInfo> failedFiles = new ConcurrentQueue<FailureInfo>();         //실패한 파일 모을 배열 -> 이걸 어떻게 표로 나타낼 수 있다면 UI 완성임.
         private ConcurrentQueue<SuccessInfo> successedFiles = new ConcurrentQueue<SuccessInfo>();
+        private System.Windows.Forms.Timer fileListUpdateTimer;
 
         private string ORIGINALPATH = "..\\DATAS\\original\\";
         private string TRANSFORMEDPATH = "..\\DATAS\\transformed\\";
         private string INPUTROUTE = "..\\DATAS\\inputRoute\\";
         private static string LOGPATH = "..\\DATAS\\log\\";
-        //private string ERRORPATH = "..\\DATAS\\log\\errorLog";
         private static string ERRORPATH = Path.Combine(LOGPATH, "errorLog");
 
         public Form1()
@@ -49,6 +50,9 @@ namespace checkFileContent
             RunGenerateFolder();                //폴더 생성
             InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
             InitializeThreadsAndLabels();       //UI 표시용 invoke
+
+            InitializeFileListUpdateTimer();
+
             DeleteOldLogs();                    //오래된 로그파일 지우기
             UpdateStatus("파일 변환 전");
             UpdatePathLabel();
@@ -57,6 +61,13 @@ namespace checkFileContent
 
         private void InitializeFileSystemWatcher()
         {
+
+            if (watcher != null)
+            {
+                watcher.Dispose();
+            }   //폴더 변경했을때, 이전 폴더는 해제해주는 로직임. -> 되는지 확인해 봐야해요
+
+
             watcher = new FileSystemWatcher();
             watcher.Path = Path.GetFullPath(@INPUTROUTE);
             watcher.Filter = "*.*";
@@ -83,14 +94,14 @@ namespace checkFileContent
             for (int i = 0; i < 3; i++)
             {
                 threadLabels[i] = new Label();
-                threadLabels[i].Location = new System.Drawing.Point(150, 100 + (i * 70));
-                threadLabels[i].Size = new System.Drawing.Size(200, 15);
+                threadLabels[i].Location = new System.Drawing.Point(330, 100 + (i * 70));
+                threadLabels[i].Size = new System.Drawing.Size(100, 15);
                 this.Controls.Add(threadLabels[i]);
                 threadLabels[i].BringToFront();
                 threadLabels[i].Text = "파일 입력 대기";
 
                 fileCountLabels[i] = new Label();
-                fileCountLabels[i].Location = new System.Drawing.Point(350, 100 + (i * 70));
+                fileCountLabels[i].Location = new System.Drawing.Point(430, 100 + (i * 70));
                 fileCountLabels[i].Size = new System.Drawing.Size(200, 15);
                 fileCountLabels[i].Text = "Success: 0  Failure: 0";
                 fileCountLabels[i].BringToFront();
@@ -105,6 +116,21 @@ namespace checkFileContent
                 UpdateFileCountLabel(threadIndex);
             }
         }
+
+        private void InitializeFileListUpdateTimer()
+        {
+            fileListUpdateTimer = new System.Windows.Forms.Timer();
+            fileListUpdateTimer.Interval = 1000; // 1초 간격
+            fileListUpdateTimer.Tick += new EventHandler(OnFileListUpdateTimerTick);
+            fileListUpdateTimer.Start();
+        }
+
+        private void OnFileListUpdateTimerTick(object sender, EventArgs e)
+        {
+            UpdateFileListStatus();
+            UpdateFileListBox();
+        }
+
 
         private void ProcessFiles(int threadIndex)
         {
@@ -471,6 +497,45 @@ namespace checkFileContent
             }
         }
 
+        private void UpdateFileListStatus()
+        {
+            try
+            {
+                if (fileListStatusLabel.InvokeRequired)
+                {
+                    fileListStatusLabel.Invoke(new Action(() => fileListStatusLabel.Text = "파일 목록 상태: " + fileList.Count + "개 파일 대기중"));
+                }
+                else
+                {
+                    fileListStatusLabel.Text = "파일 목록 상태: " + fileList.Count + "개 파일 대기중";
+                }
+            }
+            catch (InvalidAsynchronousStateException)
+            {
+                // 예외 처리 로직
+            }
+        }
+
+        private void UpdateFileListBox()
+        {
+            if (fileListBox.InvokeRequired)
+            {
+                fileListBox.Invoke(new Action(() => RefreshFileListBox()));
+            }
+            else
+            {
+                RefreshFileListBox();
+            }
+        }
+
+        private void RefreshFileListBox()
+        {
+            fileListBox.Items.Clear();
+            foreach (var filePath in fileList)
+            {
+                fileListBox.Items.Add(Path.GetFileName(filePath));
+            }
+        }
         private static void RunGenerateFolder()
         {
             try
