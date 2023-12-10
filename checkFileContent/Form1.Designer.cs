@@ -52,6 +52,10 @@
             this.logPathLabel = new System.Windows.Forms.Label();
             this.fileListStatusLabel = new System.Windows.Forms.Label();
             this.fileListBox = new System.Windows.Forms.ListBox();
+            this.progressBarOriginal = new System.Windows.Forms.ProgressBar();
+            this.progressBarTransformed = new System.Windows.Forms.ProgressBar();
+            this.progressBarLog = new System.Windows.Forms.ProgressBar();
+            this.progressBarInput = new System.Windows.Forms.ProgressBar();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -286,11 +290,43 @@
             this.fileListBox.Size = new System.Drawing.Size(297, 292);
             this.fileListBox.TabIndex = 23;
             // 
+            // progressBarOriginal
+            // 
+            this.progressBarOriginal.Location = new System.Drawing.Point(711, 479);
+            this.progressBarOriginal.Name = "progressBarOriginal";
+            this.progressBarOriginal.Size = new System.Drawing.Size(210, 23);
+            this.progressBarOriginal.TabIndex = 24;
+            // 
+            // progressBarTransformed
+            // 
+            this.progressBarTransformed.Location = new System.Drawing.Point(711, 535);
+            this.progressBarTransformed.Name = "progressBarTransformed";
+            this.progressBarTransformed.Size = new System.Drawing.Size(210, 23);
+            this.progressBarTransformed.TabIndex = 25;
+            // 
+            // progressBarLog
+            // 
+            this.progressBarLog.Location = new System.Drawing.Point(711, 659);
+            this.progressBarLog.Name = "progressBarLog";
+            this.progressBarLog.Size = new System.Drawing.Size(210, 23);
+            this.progressBarLog.TabIndex = 26;
+            // 
+            // progressBarInput
+            // 
+            this.progressBarInput.Location = new System.Drawing.Point(711, 593);
+            this.progressBarInput.Name = "progressBarInput";
+            this.progressBarInput.Size = new System.Drawing.Size(210, 23);
+            this.progressBarInput.TabIndex = 27;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1001, 708);
+            this.Controls.Add(this.progressBarInput);
+            this.Controls.Add(this.progressBarLog);
+            this.Controls.Add(this.progressBarTransformed);
+            this.Controls.Add(this.progressBarOriginal);
             this.Controls.Add(this.fileListBox);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.fileListStatusLabel);
@@ -345,6 +381,10 @@
         private System.Windows.Forms.Label logPathLabel;
         private System.Windows.Forms.Label fileListStatusLabel;
         private System.Windows.Forms.ListBox fileListBox;
+        private System.Windows.Forms.ProgressBar progressBarOriginal;
+        private System.Windows.Forms.ProgressBar progressBarTransformed;
+        private System.Windows.Forms.ProgressBar progressBarLog;
+        private System.Windows.Forms.ProgressBar progressBarInput;
     }
 }
 

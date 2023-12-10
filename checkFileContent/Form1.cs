@@ -116,6 +116,12 @@ namespace checkFileContent
                 conversionThreads[i].Start();
                 UpdateFileCountLabel(threadIndex);
             }
+
+            //폴더 저장공간 표시.
+            progressBarOriginal.Maximum = 1024; // 1GB, MB 단위로 표시
+            progressBarTransformed.Maximum = 1024;
+            progressBarInput.Maximum = 1024;
+            progressBarLog.Maximum = 1024;
         }
 
         private void InitializeFileListUpdateTimer()
@@ -130,6 +136,7 @@ namespace checkFileContent
         {
             UpdateFileListStatus();
             UpdateFileListBox();
+            UpdateProgressBars();
         }
 
 
@@ -231,6 +238,7 @@ namespace checkFileContent
 
         private string extractFileName(string filePath)
         {
+            //중요!! checkDupName 을 transform 폴더에 대해서 돌려서, 중복되는 경우에 인덱스 추가해서 돌려주어야 한다.
             try
             {
                 string firstLine = "";
@@ -264,41 +272,46 @@ namespace checkFileContent
 
         private void transformFile(string file, int threadIndex)
         {
-                Console.Write("Processing File: " + file + "\n");
-                string extension = Path.GetExtension(file);
+            Console.Write("Processing File: " + file + "\n");
+            string extension = Path.GetExtension(file);
 
-                // "[TargetFileName] "을 제거한 파일명
-                string trimmedFileName = Path.GetFileNameWithoutExtension(file).Replace("[TargetFileName] ", "");
-                string transformedFileName = "";
-                byte[] fileData = File.ReadAllBytes(file);
-
-                try
+            // "[TargetFileName] "을 제거한 파일명
+            string trimmedFileName = Path.GetFileNameWithoutExtension(file).Replace("[TargetFileName] ", "");
+            string transformedFileName = "";
+            byte[] fileData = File.ReadAllBytes(file);
+            string afterATRANSName = extractFileName(file);
+                
+            try
+            {
+                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                //여기에 extractFileName 에서 리턴 받은 [atrans] 뒤에 오는 내용을 저장하고, 그거에 변환파일 내용이랑 확장자를 갖다 붙이자.
+                    //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".atxt");
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".atxt");
+
+                    if (!File.Exists(transformedFileName))
                     {
-                    //여기에 extractFileName 에서 리턴 받은 [atrans] 뒤에 오는 내용을 저장하고, 그거에 변환파일 내용이랑 확장자를 갖다 붙이자.
-                        transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".atxt");
-                        if (!File.Exists(transformedFileName))
-                        {
-                            Console.Write("no duplicate file name in transform area\n");
-                            File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(fileData), Encoding.UTF8);
-                        }
-                    }
-                    else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
-                    {
-                        transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".abin");
-                        if (!File.Exists(transformedFileName))
-                        {
-                            Console.Write("no duplicate file name in transform area\n");
-                            File.WriteAllBytes(transformedFileName, fileData);
-                        }
+                        Console.Write("no duplicate file name in transform area\n");
+                        File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(fileData), Encoding.UTF8);
                     }
                 }
-                catch (Exception ex)
+                else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Error in transformFile: " + ex.Message);
-                    return;
+                    //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".abin");
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".abin");
+                    
+                    if (!File.Exists(transformedFileName))
+                    {
+                        Console.Write("no duplicate file name in transform area\n");
+                        File.WriteAllBytes(transformedFileName, fileData);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in transformFile: " + ex.Message);
+                return;
+            }
         }
 
         private bool checkTransformFunction(string file, int threadIndex)
@@ -560,6 +573,7 @@ namespace checkFileContent
             }
         }
 
+
         private void RefreshFileListBox()
         {
             fileListBox.Items.Clear();
@@ -568,6 +582,35 @@ namespace checkFileContent
                 fileListBox.Items.Add(Path.GetFileName(filePath));
             }
         }
+
+        private long GetDirectorySize(string folderPath)
+        {
+            DirectoryInfo di = new DirectoryInfo(folderPath);
+            return di.EnumerateFiles("*", SearchOption.AllDirectories).Sum(fi => fi.Length);
+        }
+
+        private void UpdateProgressBars()
+        {
+            progressBarOriginal.Value = Math.Min((int)(GetDirectorySize(ORIGINALPATH) / (1024 * 1024)), progressBarOriginal.Maximum);
+            progressBarTransformed.Value = Math.Min((int)(GetDirectorySize(TRANSFORMEDPATH) / (1024 * 1024)), progressBarTransformed.Maximum);
+            progressBarInput.Value = Math.Min((int)(GetDirectorySize(INPUTROUTE) / (1024 * 1024)), progressBarInput.Maximum);
+            progressBarLog.Value = Math.Min((int)(GetDirectorySize(LOGPATH) / (1024 * 1024)), progressBarLog.Maximum);
+
+            CheckForSpaceLimit();
+        }
+
+        private void CheckForSpaceLimit()
+        {
+            long limit = 1024 * 1024 * 1024; // 1GB in bytes
+            if (GetDirectorySize(ORIGINALPATH) > limit ||
+                GetDirectorySize(TRANSFORMEDPATH) > limit ||
+                GetDirectorySize(INPUTROUTE) > limit ||
+                GetDirectorySize(LOGPATH) > limit)
+            {
+                MessageBox.Show("경고: 저장 공간 제한에 근접했습니다!", "저장 공간 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
         private static void RunGenerateFolder()
         {
             try
