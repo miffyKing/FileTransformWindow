@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -203,13 +204,12 @@ namespace checkFileContent
                 for (int i = 1; i <= 9; i++)
                 {
                     string lineToUpdate = "휴식 중 ";
-                    string whatToAdd = "";
+                    string pointToAdd = "";
                     for (int j = 0; j < i % 4; j++)
                     {
-                        whatToAdd += ".";
+                        pointToAdd += ".";
                     }
-
-                    UpdateThreadLabel(threadIndex, lineToUpdate + whatToAdd);
+                    UpdateThreadLabel(threadIndex, lineToUpdate + pointToAdd);
                     Thread.Sleep(1000);
 
                 }
@@ -229,7 +229,40 @@ namespace checkFileContent
             return newFilePath;
         }
 
-        void transformFile(string file, int threadIndex)
+        private string extractFileName(string filePath)
+        {
+            try
+            {
+                string firstLine = "";
+                string extension = Path.GetExtension(filePath);
+                if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
+                {
+                    // 이진 파일 처리
+                    byte[] fileData = File.ReadAllBytes(filePath);
+                    firstLine = Encoding.UTF8.GetString(fileData).Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)[0];
+                }
+                else
+                {
+                    // 텍스트 파일 처리
+                    firstLine = File.ReadLines(filePath, Encoding.UTF8).First();
+                }
+
+                // '[ATRANS]' 문자열 제거
+                if (firstLine.StartsWith("[ATRANS]"))
+                {
+                    return firstLine.Replace("[ATRANS]", "").Trim();
+                }
+
+                return firstLine;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                return null;
+            }
+        }
+
+        private void transformFile(string file, int threadIndex)
         {
                 Console.Write("Processing File: " + file + "\n");
                 string extension = Path.GetExtension(file);
@@ -243,6 +276,7 @@ namespace checkFileContent
                 {
                     if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
                     {
+                    //여기에 extractFileName 에서 리턴 받은 [atrans] 뒤에 오는 내용을 저장하고, 그거에 변환파일 내용이랑 확장자를 갖다 붙이자.
                         transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".atxt");
                         if (!File.Exists(transformedFileName))
                         {
@@ -265,11 +299,9 @@ namespace checkFileContent
                     Console.WriteLine("Error in transformFile: " + ex.Message);
                     return;
                 }
-
-            
         }
 
-        bool checkTransformFunction(string file, int threadIndex)
+        private bool checkTransformFunction(string file, int threadIndex)
         {
             string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed" };   
            
@@ -762,7 +794,6 @@ namespace checkFileContent
 
         private void label2_Click(object sender, EventArgs e)
         {
-
         }
     }
 }
