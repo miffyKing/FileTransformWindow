@@ -39,6 +39,7 @@ namespace checkFileContent
         private string INPUTROUTE = "..\\DATAS\\inputRoute\\";
         private static string LOGPATH = "..\\DATAS\\log\\";
         private static string ERRORPATH = Path.Combine(LOGPATH, "errorLog");
+/*        private FileSystemWatcher[] watchers;           //파일시스템와처를 클래스레벨에서 유지하고 있어야함.*/
 
         public Form1()
         {
@@ -50,6 +51,8 @@ namespace checkFileContent
 
             RunGenerateFolder();                //폴더 생성
             InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
+            //InitializeFolderDeletionWatcher();
+
             InitializeThreadsAndLabels();       //UI 표시용 invoke
 
             InitializeFileListUpdateTimer();
@@ -76,6 +79,7 @@ namespace checkFileContent
             watcher.EnableRaisingEvents = true;
         }
 
+        
         private void UpdatePathLabel()
         {
             originalPathlabel.Text = ORIGINALPATH;
@@ -147,9 +151,8 @@ namespace checkFileContent
                 if (fileList.TryDequeue(out string filePath))
                 {
                     UpdateFileCountLabel(threadIndex);
-                    string originalPath = ORIGINALPATH;
                     string prevName = filePath;
-                    filePath = checkDupFileName(filePath, originalPath);
+                    filePath = checkDupFileName(filePath, ORIGINALPATH);
 
                     Thread.Sleep(500);
                     UpdateThreadLabel(threadIndex, "변환 시작");
@@ -169,6 +172,7 @@ namespace checkFileContent
                             fileCounts[threadIndex].SuccessCount++;
                             UpdateFileCountLabel(threadIndex);  // 이거 변환프로세스 따라 값 바꿔야함
                             transformFile(filePath, threadIndex);
+                            WriteLog(logFilePath, "Thread index :" + threadIndex + ": File Transform SUCCESS :" + Path.GetFileName(filePath));
                             successedFiles.Enqueue(new SuccessInfo(filePath, threadIndex));
                         }
                         else
@@ -270,7 +274,21 @@ namespace checkFileContent
             }
         }
 
-        private void transformFile(string file, int threadIndex)
+        private string GenerateUniqueFileName(string basePath, string fileName)
+        {
+            string fullFilePath = Path.Combine(basePath, fileName);
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+            string extension = Path.GetExtension(fileName);
+            int count = 2;
+
+            while (File.Exists(fullFilePath))
+            {
+                fullFilePath = Path.Combine(basePath, $"{fileNameWithoutExt}({count++}){extension}");
+            }
+            return fullFilePath;
+        }
+
+        /*private void transformFile(string file, int threadIndex)
         {
             Console.Write("Processing File: " + file + "\n");
             string extension = Path.GetExtension(file);
@@ -280,16 +298,15 @@ namespace checkFileContent
             string transformedFileName = "";
             byte[] fileData = File.ReadAllBytes(file);
             string afterATRANSName = extractFileName(file);
-                
+
             try
             {
                 if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
                 {
-                //여기에 extractFileName 에서 리턴 받은 [atrans] 뒤에 오는 내용을 저장하고, 그거에 변환파일 내용이랑 확장자를 갖다 붙이자.
+                    //여기에 extractFileName 에서 리턴 받은 [atrans] 뒤에 오는 내용을 저장하고, 그거에 변환파일 내용이랑 확장자를 갖다 붙이자.
                     //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".atxt");
                     transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".atxt");
-
-                    if (!File.Exists(transformedFileName))
+                     if (!File.Exists(transformedFileName))
                     {
                         Console.Write("no duplicate file name in transform area\n");
                         File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(fileData), Encoding.UTF8);
@@ -311,6 +328,44 @@ namespace checkFileContent
             {
                 Console.WriteLine("Error in transformFile: " + ex.Message);
                 return;
+            }
+        }
+*/
+
+        private void transformFile(string file, int threadIndex)
+        {
+            Console.Write("Processing File: " + file + "\n");
+            string extension = Path.GetExtension(file);
+            string afterATRANSName = extractFileName(file);
+            string transformedFileName = "";
+
+            try
+            {
+                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                {
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".atxt");
+                }
+                else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                {
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".abin");
+                }
+
+                // 중복 파일 이름 확인 및 새 이름 생성
+                transformedFileName = GenerateUniqueFileName(TRANSFORMEDPATH, Path.GetFileName(transformedFileName));
+
+                // 파일 쓰기
+                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                {
+                    File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(File.ReadAllBytes(file)), Encoding.UTF8);
+                }
+                else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                {
+                    File.WriteAllBytes(transformedFileName, File.ReadAllBytes(file));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in transformFile: " + ex.Message);
             }
         }
 
@@ -447,8 +502,16 @@ namespace checkFileContent
                     string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
                     if (lines.Length > 0 && lines[0].StartsWith(headerToCheck))
                     {
-                        WriteLog(logFilePath, "File Header correct, it starts with [ATRANS]  " + Path.GetFileName(file));
-                        return true;
+                        if (lines[0].Length > headerToCheck.Length && lines[0][headerToCheck.Length] != ' ')
+                        {
+                            WriteLog(logFilePath, "File Header correct, it starts with [ATRANS] " + Path.GetFileName(file));
+                            return true;
+                        }
+                        else
+                        {
+                            WriteLog(logFilePath, "File Header error: more than 1 space after [ATRANS]: " + Path.GetFileName(file));
+                        }
+                        
                     }
                     else
                     {
@@ -640,16 +703,14 @@ namespace checkFileContent
             }
         }
 
-
         private void DeleteOldLogs()
         {
             string logPath = LOGPATH;
             string errorLogPath =ERRORPATH;
 
-            DeleteFileByDate(logPath, 1);
-            DeleteFileByDate(errorLogPath, 1);
+            DeleteFileByDate(logPath, 7);
+            DeleteFileByDate(errorLogPath, 7);
         }
-
         private void DeleteFileByDate(string path, int days)
         {
             try
