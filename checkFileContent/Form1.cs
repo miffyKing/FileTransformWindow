@@ -664,7 +664,9 @@ namespace checkFileContent
             if (!Directory.Exists(ORIGINALPATH) || !Directory.Exists(TRANSFORMEDPATH) ||
         !Directory.Exists(INPUTROUTE) || !Directory.Exists(LOGPATH))
             {
-                MessageBox.Show("경고: 하나 이상의 폴더가 삭제되었습니다!", "폴더 삭제 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("경고: 하나 이상의 폴더가 삭제되어 프로그램을 종료합니다!", "폴더 삭제 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                fileListUpdateTimer.Stop();
                 Application.Exit(); // 프로그램 종료
 
                 return; // 폴더가 없으면 나머지 업데이트를 중단
