@@ -5,6 +5,8 @@ using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -648,12 +650,26 @@ namespace checkFileContent
 
         private long GetDirectorySize(string folderPath)
         {
+            if (!Directory.Exists(folderPath))
+            {
+                return 0; // 폴더가 존재하지 않으면 0 반환
+            }
+
             DirectoryInfo di = new DirectoryInfo(folderPath);
             return di.EnumerateFiles("*", SearchOption.AllDirectories).Sum(fi => fi.Length);
         }
 
         private void UpdateProgressBars()
         {
+            if (!Directory.Exists(ORIGINALPATH) || !Directory.Exists(TRANSFORMEDPATH) ||
+        !Directory.Exists(INPUTROUTE) || !Directory.Exists(LOGPATH))
+            {
+                MessageBox.Show("경고: 하나 이상의 폴더가 삭제되었습니다!", "폴더 삭제 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Application.Exit(); // 프로그램 종료
+
+                return; // 폴더가 없으면 나머지 업데이트를 중단
+            }
+
             progressBarOriginal.Value = Math.Min((int)(GetDirectorySize(ORIGINALPATH) / (1024 * 1024)), progressBarOriginal.Maximum);
             progressBarTransformed.Value = Math.Min((int)(GetDirectorySize(TRANSFORMEDPATH) / (1024 * 1024)), progressBarTransformed.Maximum);
             progressBarInput.Value = Math.Min((int)(GetDirectorySize(INPUTROUTE) / (1024 * 1024)), progressBarInput.Maximum);
@@ -690,12 +706,17 @@ namespace checkFileContent
 
                 foreach (string folder in folders)
                 {
-                    // 이미 폴더가 존재한다면 삭제
+                    // 이미 폴더가 존재한다면 삭제 -> 안하기로 했지
                     if (!Directory.Exists(folder))
                     {
                         Directory.CreateDirectory(folder);
                     }
+                   /* DirectorySecurity security = Directory.GetAccessControl(folder);
+                    SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+                    security.AddAccessRule(new FileSystemAccessRule(everyone, FileSystemRights.FullControl, AccessControlType.Allow));
+                    Directory.SetAccessControl(folder, security);*/
                 }
+
             }
             catch (Exception ex)
             {
