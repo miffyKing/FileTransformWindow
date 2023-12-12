@@ -96,7 +96,7 @@
             this.firstThreadStatus.Name = "firstThreadStatus";
             this.firstThreadStatus.Size = new System.Drawing.Size(141, 53);
             this.firstThreadStatus.TabIndex = 6;
-            this.firstThreadStatus.Text = "1번 스레드 현황";
+            this.firstThreadStatus.Text = "0번 스레드 현황";
             this.firstThreadStatus.UseVisualStyleBackColor = false;
             this.firstThreadStatus.Click += new System.EventHandler(this.firstThreadButton_Click);
             // 
@@ -108,7 +108,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(141, 53);
             this.button1.TabIndex = 7;
-            this.button1.Text = "2번 스레드 현황";
+            this.button1.Text = "1번 스레드 현황";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.secondThreadButton_Click);
             // 
@@ -120,7 +120,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(141, 53);
             this.button2.TabIndex = 8;
-            this.button2.Text = "3번 스레드 현황";
+            this.button2.Text = "2번 스레드 현황";
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.thirdThreadButton_Click);
             // 

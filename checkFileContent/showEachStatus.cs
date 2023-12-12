@@ -59,7 +59,7 @@ namespace checkFileContent
                         {
                             if (failure.ThreadIndex == threadIndex)
                             {
-                                FailureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex + 1, failure.Reason);
+                                FailureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
                             }
                         });
                     }
@@ -67,7 +67,7 @@ namespace checkFileContent
                     {
                         if (failure.ThreadIndex == threadIndex)
                         {
-                            FailureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex + 1, failure.Reason);
+                            FailureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
                         }
                     }
                 }
@@ -88,7 +88,7 @@ namespace checkFileContent
                         {
                             if (success.ThreadIndex == threadIndex)
                             {
-                                SuccessDataGridView1.Rows.Add(ActualFileName, success.ThreadIndex + 1);
+                                SuccessDataGridView1.Rows.Add(ActualFileName, success.ThreadIndex);
                             }
                         });
                     }
@@ -96,7 +96,7 @@ namespace checkFileContent
                     {
                         if (success.ThreadIndex == threadIndex)
                         {
-                            SuccessDataGridView1.Rows.Add(ActualFileName, success.ThreadIndex + 1);
+                            SuccessDataGridView1.Rows.Add(ActualFileName, success.ThreadIndex);
                         }
                     }
                 }
@@ -105,6 +105,11 @@ namespace checkFileContent
         }
 
         private void showEachStatus_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SuccessDataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }

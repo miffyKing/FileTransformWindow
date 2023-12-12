@@ -61,6 +61,7 @@
             this.SuccessDataGridView1.RowTemplate.Height = 30;
             this.SuccessDataGridView1.Size = new System.Drawing.Size(688, 285);
             this.SuccessDataGridView1.TabIndex = 2;
+            this.SuccessDataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.SuccessDataGridView1_CellContentClick);
             // 
             // label1
             // 

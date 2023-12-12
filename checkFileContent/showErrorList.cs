@@ -76,7 +76,7 @@ namespace checkFileContent
                     {
                         if (failure.ThreadIndex == 0)
                         {
-                            failureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex+1, failure.Reason);
+                            failureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
                         }
                     });
                 }
@@ -84,7 +84,7 @@ namespace checkFileContent
                 {
                     if (failure.ThreadIndex == 0)
                     {
-                        failureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex+1, failure.Reason);
+                        failureDataGridView1.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
                     }
                 }
             }
@@ -100,7 +100,7 @@ namespace checkFileContent
                     {
                         if (failure.ThreadIndex == 1)
                         {
-                            failureDataGridView2.Rows.Add(ActualFileName, failure.ThreadIndex+1, failure.Reason);
+                            failureDataGridView2.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
                         }
                     });
                 }
@@ -108,7 +108,7 @@ namespace checkFileContent
                 {
                     if (failure.ThreadIndex == 1)
                     {
-                        failureDataGridView2.Rows.Add(ActualFileName, failure.ThreadIndex+1, failure.Reason);
+                        failureDataGridView2.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
                     }
                 }
             }
@@ -125,7 +125,7 @@ namespace checkFileContent
                     {
                         if (failure.ThreadIndex == 2)
                         {
-                            failureDataGridView3.Rows.Add(ActualFileName, failure.ThreadIndex + 1, failure.Reason);
+                            failureDataGridView3.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
                         }
                     });
                 }
@@ -133,7 +133,7 @@ namespace checkFileContent
                 {
                     if (failure.ThreadIndex == 2)
                     {
-                        failureDataGridView3.Rows.Add(ActualFileName, failure.ThreadIndex + 1, failure.Reason);
+                        failureDataGridView3.Rows.Add(ActualFileName, failure.ThreadIndex, failure.Reason);
                     }
                 }
             }
