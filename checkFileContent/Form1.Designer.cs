@@ -253,6 +253,7 @@
             this.transformedPathLabel.Size = new System.Drawing.Size(54, 18);
             this.transformedPathLabel.TabIndex = 19;
             this.transformedPathLabel.Text = "label2";
+            this.transformedPathLabel.Click += new System.EventHandler(this.transformedPathLabel_Click);
             // 
             // inputPathLabel
             // 

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -164,12 +165,15 @@ namespace checkFileContent
                     {
                         string originalFilePath = Path.Combine(ORIGINALPATH, Path.GetFileName(filePath));              
                         string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(filePath) + ".txt");
+                        bool isDuplicated = false;
                         WriteLog(logFilePath, "Thread index :" + threadIndex + " Starts transrform");
                         if (prevName != filePath)
                         {
+                            isDuplicated = true;
                             WriteLog(logFilePath, "Duplicate name found in original path, File Name changed.");
                         }
-                        if (checkTransformFunction(filePath, threadIndex) == true)
+
+                        if (checkTransformFunction(filePath, threadIndex, isDuplicated) == true)
                         {
                             fileCounts[threadIndex].SuccessCount++;
                             UpdateFileCountLabel(threadIndex);  // 이거 변환프로세스 따라 값 바꿔야함
@@ -333,7 +337,7 @@ namespace checkFileContent
             }
         }
 */
-
+        //-- UTF8 Version --
         private void transformFile(string file, int threadIndex)
         {
             Console.Write("Processing File: " + file + "\n");
@@ -371,9 +375,48 @@ namespace checkFileContent
             }
         }
 
-        private bool checkTransformFunction(string file, int threadIndex)
+        /*        private void transformFile(string file, int threadIndex)
+                {
+                    Console.Write("Processing File: " + file + "\n");
+                    string extension = Path.GetExtension(file);
+                    string afterATRANSName = extractFileName(file);
+                    string transformedFileName = "";
+
+                    try
+                    {
+                        if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                        {
+                            transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".atxt");
+                        }
+                        else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                        {
+                            transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".abin");
+                        }
+
+                        // 중복 파일 이름 확인 및 새 이름 생성
+                        transformedFileName = GenerateUniqueFileName(TRANSFORMEDPATH, Path.GetFileName(transformedFileName));
+
+                        // 파일 쓰기
+                        if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // .abin (바이너리)을 .atxt (텍스트)로 변환
+                            File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(File.ReadAllBytes(file)), Encoding.Unicode);
+                        }
+                        else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // .atxt (텍스트)를 .abin (바이너리)으로 변환
+                            File.WriteAllBytes(transformedFileName, Encoding.Unicode.GetBytes(File.ReadAllText(file, Encoding.Unicode)));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error in transformFile: " + ex.Message);
+                    }
+                }*/
+
+        private bool checkTransformFunction(string file, int threadIndex, bool isDuplicated)
         {
-            string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed" };   
+            string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed", "Header Name no Match" };   
            
             if (checkExtension(file, threadIndex) == false)
             {
@@ -398,6 +441,13 @@ namespace checkFileContent
                 failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[3]));
                 return false;
             }
+
+            if (checkHeaderAndName(file, threadIndex, isDuplicated) == false)
+            {
+                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[4]));
+                return false;
+            }
+
             return true;
         }
 
@@ -532,6 +582,49 @@ namespace checkFileContent
             return false;
         }
 
+        bool checkHeaderAndName(string file, int threadIndex, bool isDuplicated)
+        {
+            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
+            string fileName = Path.GetFileNameWithoutExtension(file); // 확장자를 제외한 파일명
+            string headerName;
+            string originalFilePath = Path.Combine(ORIGINALPATH, Path.GetFileName(file));
+            
+            const string fileNamePrefix = "[TargetFileName] ";
+            const string headerPrefix = "[ATRANS] ";
+            
+            fileName = fileName.Substring(fileNamePrefix.Length); // Prefix 제거
+
+            if (isDuplicated)
+            {
+                // 중복 파일의 경우, 파일 이름에서 마지막 '(' 기준으로 숫자 인덱스 제거
+                int lastIndex = fileName.LastIndexOf("(");
+                if (lastIndex > 0)
+                {
+                    fileName = fileName.Substring(0, lastIndex);
+                }
+            }
+
+            byte[] fileData = File.ReadAllBytes(file);
+            string fileContent = Encoding.UTF8.GetString(fileData);
+            string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            headerName = lines[0].Substring(headerPrefix.Length).Trim(); // Prefix 제거 및 공백 제거
+            
+            if (fileName == headerName)
+            {
+                WriteLog(logFilePath, "File Name Contents and Header Contents matches :" + Path.GetFileName(file));
+                return true;
+            }
+            else
+            {
+                WriteLog(logFilePath, "Mismatch between File Name Contents and Header Contents : " + Path.GetFileName(file));
+                fileCounts[threadIndex].FailureCount++;
+                File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
+                UpdateFileCountLabel(threadIndex);
+                return false;
+            }
+        }
+
 
         private void WriteLog(string filePath, string message)
         {
@@ -560,7 +653,6 @@ namespace checkFileContent
             }
             catch (InvalidAsynchronousStateException)
             {
-                // 예외 처리 로직, 예를 들어 로깅을 수행하거나 무시할 수 있습니다.
             }
         }
 
@@ -584,8 +676,7 @@ namespace checkFileContent
             }
             catch (InvalidAsynchronousStateException)
             {
-                // 예외 처리 로직, 예를 들어 로깅을 수행하거나 무시할 수 있습니다.
-                // 예외가 발생했을 때 수행할 작업을 여기에 추가합니다.
+              
             }
         }
 
@@ -688,7 +779,11 @@ namespace checkFileContent
                 GetDirectorySize(INPUTROUTE) > limit ||
                 GetDirectorySize(LOGPATH) > limit)
             {
-                MessageBox.Show("경고: 저장 공간 제한에 근접했습니다!", "저장 공간 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("경고: 저장 공간 제한에 도달했습니다!", "저장 공간 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                fileListUpdateTimer.Stop();
+                Application.Exit(); // 프로그램 종료
+
+                return; // 폴더가 없으면 나머지 업데이트를 중단
             }
         }
 
@@ -708,15 +803,10 @@ namespace checkFileContent
 
                 foreach (string folder in folders)
                 {
-                    // 이미 폴더가 존재한다면 삭제 -> 안하기로 했지
                     if (!Directory.Exists(folder))
                     {
                         Directory.CreateDirectory(folder);
                     }
-                   /* DirectorySecurity security = Directory.GetAccessControl(folder);
-                    SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
-                    security.AddAccessRule(new FileSystemAccessRule(everyone, FileSystemRights.FullControl, AccessControlType.Allow));
-                    Directory.SetAccessControl(folder, security);*/
                 }
 
             }
@@ -830,6 +920,30 @@ namespace checkFileContent
             }
         }
 
+        private bool CheckDupPaths()
+        {
+            string absoluteOriginalPath = Path.GetFullPath(ORIGINALPATH).TrimEnd('\\');
+            string absoluteTransformedPath = Path.GetFullPath(TRANSFORMEDPATH).TrimEnd('\\');
+            string absoluteInputRoute = Path.GetFullPath(INPUTROUTE).TrimEnd('\\');
+            string absoluteLogPath = Path.GetFullPath(LOGPATH).TrimEnd('\\');
+            // \ 이거 맨 마지막에 제외 안하면 상대경로와 절대경로를 다르게 판단합니다.
+            List<string> paths = new List<string> { absoluteOriginalPath, absoluteTransformedPath, absoluteInputRoute, absoluteLogPath };
+
+            for (int i = 0; i < paths.Count; i++)
+            {
+                for (int j = i + 1; j < paths.Count; j++)
+                {
+                    if (paths[i].Equals(paths[j], StringComparison.OrdinalIgnoreCase))
+                    {
+                        Console.WriteLine("Duplicate path found: " + paths[i]);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+
         private void button3_Click(object sender, EventArgs e)
         {
             using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
@@ -846,7 +960,14 @@ namespace checkFileContent
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
                     // originalPath 변수에 선택된 경로 할당
+                    string prevORIGINALPATH = ORIGINALPATH;
                     ORIGINALPATH = folderBrowserDialog.SelectedPath;
+                    if (CheckDupPaths() == true)
+                    {
+                        //중복 경로가 존재하여 폴더 변경에 실패했다는 알람 1회 출력 후
+                        MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ORIGINALPATH = prevORIGINALPATH;
+                    }
                     UpdatePathLabel();
                 }
             }
@@ -865,10 +986,18 @@ namespace checkFileContent
                 DialogResult result = folderBrowserDialog.ShowDialog();
 
                 // 사용자가 OK를 눌렀는지 확인
+               
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
                     // originalPath 변수에 선택된 경로 할당
+                    string prevTRANSFORMPATH = TRANSFORMEDPATH;
                     TRANSFORMEDPATH = folderBrowserDialog.SelectedPath;
+
+                    if(CheckDupPaths() == true)
+                    {
+                        MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        TRANSFORMEDPATH = prevTRANSFORMPATH;
+                    }
                     UpdatePathLabel();
                 }
             }
@@ -890,8 +1019,15 @@ namespace checkFileContent
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
                     // originalPath 변수에 선택된 경로 할당
+                    string prevINPUT = INPUTROUTE;
                     INPUTROUTE = folderBrowserDialog.SelectedPath;
-                    InitializeFileSystemWatcher();
+
+                    if (CheckDupPaths() == true)
+                    {
+                        MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        INPUTROUTE = prevINPUT;
+                    }
+                    InitializeFileSystemWatcher();  //변경된 폴더에서 watcher 재실행 (기존거 삭제)
                     UpdatePathLabel();
                 }
             }
@@ -912,8 +1048,19 @@ namespace checkFileContent
                 // 사용자가 OK를 눌렀는지 확인
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
+                    string prevLOG = LOGPATH;
+
                     // originalPath 변수에 선택된 경로 할당
                     LOGPATH = folderBrowserDialog.SelectedPath;
+                    
+                    if (CheckDupPaths() == true)
+                    {
+                        MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        LOGPATH = prevLOG;
+
+                    }
+                    ERRORPATH = Path.Combine(LOGPATH, "errorLog");
+                    Directory.CreateDirectory(ERRORPATH);
                     UpdatePathLabel();
                 }
             }
@@ -921,6 +1068,11 @@ namespace checkFileContent
 
         private void label2_Click(object sender, EventArgs e)
         {
+        }
+
+        private void transformedPathLabel_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
