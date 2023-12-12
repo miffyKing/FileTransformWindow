@@ -17,11 +17,12 @@ namespace checkFileContent
     {
 
         private ConcurrentQueue<FailureInfo> failureQueue;
-
-        public showErrorList(ConcurrentQueue<FailureInfo> failures)
+        private string newErrorPath;
+        public showErrorList(ConcurrentQueue<FailureInfo> failures, string newPath)
         {
             InitializeComponent();
             failureQueue = failures;
+            newErrorPath = newPath;
 
             var handle = this.Handle;
 
@@ -154,8 +155,8 @@ namespace checkFileContent
             try
             {
                 // 지정된 경로에 대한 전체 경로를 계산
-                string folderPath = Path.GetFullPath("..\\DATAS\\log\\errorLog");
-
+                //string folderPath = Path.GetFullPath("..\\DATAS\\log\\errorLog");
+                string folderPath = newErrorPath;
                 // 폴더가 실제로 존재하는지 확인
                 if (Directory.Exists(folderPath))
                 {

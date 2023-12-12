@@ -876,7 +876,7 @@ namespace checkFileContent
         }
         private void errorLogCheck_Click(object sender, EventArgs e)
         {
-            showErrorList newForm2 = new showErrorList(failedFiles);
+            showErrorList newForm2 = new showErrorList(failedFiles, ERRORPATH);
             newForm2.ShowDialog();
         }
         private void firstThreadButton_Click(object sender, EventArgs e)
