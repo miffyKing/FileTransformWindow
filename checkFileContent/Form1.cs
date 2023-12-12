@@ -42,7 +42,9 @@ namespace checkFileContent
         private string INPUTROUTE = "..\\DATAS\\inputRoute\\";
         private static string LOGPATH = "..\\DATAS\\log\\";
         private static string ERRORPATH = Path.Combine(LOGPATH, "errorLog");
-/*        private FileSystemWatcher[] watchers;           //파일시스템와처를 클래스레벨에서 유지하고 있어야함.*/
+        /*        private FileSystemWatcher[] watchers;           //파일시스템와처를 클래스레벨에서 유지하고 있어야함.*/
+
+        private bool isSpaceLimitWarningShown = false; // 클래스 레벨 변수 추가
 
         public Form1()
         {
@@ -155,7 +157,7 @@ namespace checkFileContent
                 {
                     UpdateFileCountLabel(threadIndex);
                     string prevName = filePath;
-                    filePath = checkDupFileName(filePath, ORIGINALPATH);
+                    filePath = CheckDupFileName(filePath, ORIGINALPATH);
 
                     Thread.Sleep(500);
                     UpdateThreadLabel(threadIndex, "변환 시작");
@@ -177,7 +179,7 @@ namespace checkFileContent
                         {
                             fileCounts[threadIndex].SuccessCount++;
                             UpdateFileCountLabel(threadIndex);  // 이거 변환프로세스 따라 값 바꿔야함
-                            transformFile(filePath, threadIndex);
+                            TransformFile(filePath, threadIndex);
                             WriteLog(logFilePath, "Thread index :" + threadIndex + ": File Transform SUCCESS :" + Path.GetFileName(filePath));
                             successedFiles.Enqueue(new SuccessInfo(filePath, threadIndex));
                         }
@@ -231,7 +233,7 @@ namespace checkFileContent
 
                 }
         }
-        private string checkDupFileName(string filePath, string originalDir)
+        private string CheckDupFileName(string filePath, string originalDir)
         {
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
             string extension = Path.GetExtension(filePath);
@@ -246,7 +248,7 @@ namespace checkFileContent
             return newFilePath;
         }
 
-        private string extractFileName(string filePath)
+        private string ExtractFileName(string filePath)
         {
             //중요!! checkDupName 을 transform 폴더에 대해서 돌려서, 중복되는 경우에 인덱스 추가해서 돌려주어야 한다.
             try
@@ -294,7 +296,7 @@ namespace checkFileContent
             return fullFilePath;
         }
 
-        /*private void transformFile(string file, int threadIndex)
+        /*private void TransformFile(string file, int threadIndex)
         {
             Console.Write("Processing File: " + file + "\n");
             string extension = Path.GetExtension(file);
@@ -303,13 +305,13 @@ namespace checkFileContent
             string trimmedFileName = Path.GetFileNameWithoutExtension(file).Replace("[TargetFileName] ", "");
             string transformedFileName = "";
             byte[] fileData = File.ReadAllBytes(file);
-            string afterATRANSName = extractFileName(file);
+            string afterATRANSName = ExtractFileName(file);
 
             try
             {
                 if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
                 {
-                    //여기에 extractFileName 에서 리턴 받은 [atrans] 뒤에 오는 내용을 저장하고, 그거에 변환파일 내용이랑 확장자를 갖다 붙이자.
+                    //여기에 ExtractFileName 에서 리턴 받은 [atrans] 뒤에 오는 내용을 저장하고, 그거에 변환파일 내용이랑 확장자를 갖다 붙이자.
                     //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".atxt");
                     transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".atxt");
                      if (!File.Exists(transformedFileName))
@@ -332,17 +334,17 @@ namespace checkFileContent
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in transformFile: " + ex.Message);
+                Console.WriteLine("Error in TransformFile: " + ex.Message);
                 return;
             }
         }
 */
         //-- UTF8 Version --
-        private void transformFile(string file, int threadIndex)
+        private void TransformFile(string file, int threadIndex)
         {
             Console.Write("Processing File: " + file + "\n");
             string extension = Path.GetExtension(file);
-            string afterATRANSName = extractFileName(file);
+            string afterATRANSName = ExtractFileName(file);
             string transformedFileName = "";
 
             try
@@ -371,15 +373,15 @@ namespace checkFileContent
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in transformFile: " + ex.Message);
+                Console.WriteLine("Error in TransformFile: " + ex.Message);
             }
         }
 
-        /*        private void transformFile(string file, int threadIndex)
+        /*        private void TransformFile(string file, int threadIndex)
                 {
                     Console.Write("Processing File: " + file + "\n");
                     string extension = Path.GetExtension(file);
-                    string afterATRANSName = extractFileName(file);
+                    string afterATRANSName = ExtractFileName(file);
                     string transformedFileName = "";
 
                     try
@@ -410,7 +412,7 @@ namespace checkFileContent
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Error in transformFile: " + ex.Message);
+                        Console.WriteLine("Error in TransformFile: " + ex.Message);
                     }
                 }*/
 
@@ -755,9 +757,10 @@ namespace checkFileContent
             if (!Directory.Exists(ORIGINALPATH) || !Directory.Exists(TRANSFORMEDPATH) ||
         !Directory.Exists(INPUTROUTE) || !Directory.Exists(LOGPATH))
             {
+                fileListUpdateTimer.Stop();
                 MessageBox.Show("경고: 하나 이상의 폴더가 삭제되어 프로그램을 종료합니다!", "폴더 삭제 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                fileListUpdateTimer.Stop();
+                
                 Application.Exit(); // 프로그램 종료
 
                 return; // 폴더가 없으면 나머지 업데이트를 중단
@@ -779,8 +782,10 @@ namespace checkFileContent
                 GetDirectorySize(INPUTROUTE) > limit ||
                 GetDirectorySize(LOGPATH) > limit)
             {
-                MessageBox.Show("경고: 저장 공간 제한에 도달했습니다!", "저장 공간 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //isSpaceLimitWarningShown = true; // 플래그 설정
                 fileListUpdateTimer.Stop();
+                MessageBox.Show("경고: 저장 공간 제한에 도달했습니다!", "저장 공간 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                
                 Application.Exit(); // 프로그램 종료
 
                 return; // 폴더가 없으면 나머지 업데이트를 중단
