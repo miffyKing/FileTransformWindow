@@ -340,7 +340,7 @@ namespace checkFileContent
             }
         }
 */
-        //-- UTF8 Version --
+        //-- UTF16 Version --
         private void TransformFile(string file, int threadIndex)
         {
             Console.Write("Processing File: " + file + "\n");
@@ -500,7 +500,6 @@ namespace checkFileContent
 
             //로직 추가 - TargetFileName 으로 시작해도, 띄어쓰기가 뒤에 몇개 있는지 확인해야함.
             string trimmedFileName = fileName.Replace("[TargetFileName] ", "");
-            //string pattern = @"\(\d+\)\.(atxt|abin)$";  //(2).abin 처리
             if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".abin") || trimmedFileName.Equals(".atxt"))
             {
                 fileCounts[threadIndex].FailureCount++;
@@ -557,7 +556,7 @@ namespace checkFileContent
                 {
                     string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
 
-                    Console.Write("WOW : " + fileContent);
+                    //Console.Write("WOW : " + fileContent);
                     string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
                     if (lines.Length > 0 && lines[0].StartsWith(headerToCheck))
                     {
@@ -601,12 +600,15 @@ namespace checkFileContent
             
             fileName = fileName.Substring(fileNamePrefix.Length); // Prefix 제거
 
-            if (isDuplicated)
+            string fileIndex = "";
+            if (isDuplicated == true)
             {
+                Console.Write("WHY NOT COME HERE???\n");
                 // 중복 파일의 경우, 파일 이름에서 마지막 '(' 기준으로 숫자 인덱스 제거
                 int lastIndex = fileName.LastIndexOf("(");
                 if (lastIndex > 0)
                 {
+                    fileIndex = fileName.Substring(lastIndex); // 인덱스 추출
                     fileName = fileName.Substring(0, lastIndex);
                 }
             }
@@ -621,6 +623,13 @@ namespace checkFileContent
             Console.WriteLine("header name is : " + headerName + " Filename is : " + fileName);
             if (fileName == headerName)
             {
+                headerName += fileIndex;
+                if (isDuplicated)
+                {
+                    // 파일 헤더에 인덱스 추가
+                    UpdateFileHeaderWithIndex(file, fileIndex);
+                }
+                // isDuplicated 에 의해 잘려나간 (2) 의 내용을 [ATRANS] 파일명 뒤에 쓴다.
                 WriteLog(logFilePath, "File Name Contents and Header Contents matches :" + Path.GetFileName(file));
                 return true;
             }
@@ -631,6 +640,20 @@ namespace checkFileContent
                 File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
                 UpdateFileCountLabel(threadIndex);
                 return false;
+            }
+        }
+        private void UpdateFileHeaderWithIndex(string file, string headerToAdd)
+        {
+            // 파일의 모든 줄을 읽기
+            List<string> lines = File.ReadAllLines(file, Encoding.Unicode).ToList();
+
+            if (lines.Count > 0)
+            {
+                // 첫 번째 줄(헤더)에 인덱스 추가
+                lines[0] = lines[0] + headerToAdd;
+
+                // 변경된 내용으로 파일 다시 쓰기
+                File.WriteAllLines(file, lines, Encoding.Unicode);
             }
         }
 
