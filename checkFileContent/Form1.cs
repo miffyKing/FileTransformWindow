@@ -42,6 +42,7 @@ namespace checkFileContent
         private string INPUTROUTE = "..\\DATAS\\inputRoute\\";
         private static string LOGPATH = "..\\DATAS\\log\\";
         private static string ERRORPATH = Path.Combine(LOGPATH, "errorLog");
+        private static long userInputSize = 1024;
         /*        private FileSystemWatcher[] watchers;           //파일시스템와처를 클래스레벨에서 유지하고 있어야함.*/
 
         private bool isSpaceLimitWarningShown = false; // 클래스 레벨 변수 추가
@@ -127,10 +128,10 @@ namespace checkFileContent
             }
 
             //폴더 저장공간 표시.
-            progressBarOriginal.Maximum = 1024; // 1GB, MB 단위로 표시
-            progressBarTransformed.Maximum = 1024;
-            progressBarInput.Maximum = 1024;
-            progressBarLog.Maximum = 1024;
+            progressBarOriginal.Maximum = (int)userInputSize; // 1GB, MB 단위로 표시
+            progressBarTransformed.Maximum = (int)userInputSize;
+            progressBarInput.Maximum = (int)userInputSize;
+            progressBarLog.Maximum = (int)userInputSize;
         }
 
         private void InitializeFileListUpdateTimer()
@@ -771,18 +772,17 @@ namespace checkFileContent
 
                 return; // 폴더가 없으면 나머지 업데이트를 중단
             }
-
-            progressBarOriginal.Value = Math.Min((int)(GetDirectorySize(ORIGINALPATH) / (1024 * 1024)), progressBarOriginal.Maximum);
-            progressBarTransformed.Value = Math.Min((int)(GetDirectorySize(TRANSFORMEDPATH) / (1024 * 1024)), progressBarTransformed.Maximum);
-            progressBarInput.Value = Math.Min((int)(GetDirectorySize(INPUTROUTE) / (1024 * 1024)), progressBarInput.Maximum);
-            progressBarLog.Value = Math.Min((int)(GetDirectorySize(LOGPATH) / (1024 * 1024)), progressBarLog.Maximum);
+            progressBarOriginal.Value = Math.Min((int)(GetDirectorySize(ORIGINALPATH) / (1024L * 1024L)), progressBarOriginal.Maximum);
+            progressBarTransformed.Value = Math.Min((int)(GetDirectorySize(TRANSFORMEDPATH) / (1024L * 1024L)), progressBarTransformed.Maximum);
+            progressBarInput.Value = Math.Min((int)(GetDirectorySize(INPUTROUTE) / (1024L * 1024L)), progressBarInput.Maximum);
+            progressBarLog.Value = Math.Min((int)(GetDirectorySize(LOGPATH) / (1024L * 1024L)), progressBarLog.Maximum);
 
             CheckForSpaceLimit();
         }
 
         private void CheckForSpaceLimit()
         {
-            long limit = 1024 * 1024 * 1024; // 1GB in bytes
+            long limit = userInputSize * 1024L * 1024L; // 1GB in bytes
             if (GetDirectorySize(ORIGINALPATH) > limit ||
                 GetDirectorySize(TRANSFORMEDPATH) > limit ||
                 GetDirectorySize(INPUTROUTE) > limit ||
@@ -1085,6 +1085,20 @@ namespace checkFileContent
         }
         private void folderBrowserDialog1_HelpRequest(object sender, EventArgs e)
         {
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numericUpDownSize_ValueChanged(object sender, EventArgs e)
+        {
+            userInputSize = (long)numericUpDownSize.Value * 1024;
+            progressBarOriginal.Maximum = (int)userInputSize; // 1GB, MB 단위로 표시
+            progressBarTransformed.Maximum = (int)userInputSize;
+            progressBarInput.Maximum = (int)userInputSize;
+            progressBarLog.Maximum = (int)userInputSize;
         }
     }
 }

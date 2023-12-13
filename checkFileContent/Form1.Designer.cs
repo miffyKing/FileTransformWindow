@@ -56,9 +56,12 @@
             this.progressBarTransformed = new System.Windows.Forms.ProgressBar();
             this.progressBarLog = new System.Windows.Forms.ProgressBar();
             this.progressBarInput = new System.Windows.Forms.ProgressBar();
+            this.numericUpDownSize = new System.Windows.Forms.NumericUpDown();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSize)).BeginInit();
             this.SuspendLayout();
             // 
             // errorLogCheck
@@ -182,7 +185,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(16, 479);
+            this.button3.Location = new System.Drawing.Point(162, 485);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(144, 48);
             this.button3.TabIndex = 13;
@@ -192,7 +195,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(16, 535);
+            this.button4.Location = new System.Drawing.Point(162, 541);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(144, 48);
             this.button4.TabIndex = 14;
@@ -202,7 +205,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(16, 593);
+            this.button5.Location = new System.Drawing.Point(162, 599);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(144, 48);
             this.button5.TabIndex = 15;
@@ -212,7 +215,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(16, 649);
+            this.button6.Location = new System.Drawing.Point(162, 655);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(144, 48);
             this.button6.TabIndex = 16;
@@ -241,39 +244,39 @@
             // 
             // originalPathlabel
             // 
-            this.originalPathlabel.AutoSize = true;
-            this.originalPathlabel.Location = new System.Drawing.Point(182, 486);
+            this.originalPathlabel.AutoEllipsis = true;
+            this.originalPathlabel.Location = new System.Drawing.Point(328, 494);
             this.originalPathlabel.Name = "originalPathlabel";
-            this.originalPathlabel.Size = new System.Drawing.Size(54, 18);
+            this.originalPathlabel.Size = new System.Drawing.Size(400, 28);
             this.originalPathlabel.TabIndex = 18;
             this.originalPathlabel.Text = "label2";
             this.originalPathlabel.Click += new System.EventHandler(this.label2_Click);
             // 
             // transformedPathLabel
             // 
-            this.transformedPathLabel.AutoSize = true;
-            this.transformedPathLabel.Location = new System.Drawing.Point(182, 548);
+            this.transformedPathLabel.AutoEllipsis = true;
+            this.transformedPathLabel.Location = new System.Drawing.Point(328, 554);
             this.transformedPathLabel.Name = "transformedPathLabel";
-            this.transformedPathLabel.Size = new System.Drawing.Size(54, 18);
+            this.transformedPathLabel.Size = new System.Drawing.Size(400, 18);
             this.transformedPathLabel.TabIndex = 19;
             this.transformedPathLabel.Text = "label2";
             this.transformedPathLabel.Click += new System.EventHandler(this.transformedPathLabel_Click);
             // 
             // inputPathLabel
             // 
-            this.inputPathLabel.AutoSize = true;
-            this.inputPathLabel.Location = new System.Drawing.Point(182, 608);
+            this.inputPathLabel.AutoEllipsis = true;
+            this.inputPathLabel.Location = new System.Drawing.Point(328, 614);
             this.inputPathLabel.Name = "inputPathLabel";
-            this.inputPathLabel.Size = new System.Drawing.Size(54, 18);
+            this.inputPathLabel.Size = new System.Drawing.Size(400, 18);
             this.inputPathLabel.TabIndex = 20;
             this.inputPathLabel.Text = "label2";
             // 
             // logPathLabel
             // 
-            this.logPathLabel.AutoSize = true;
-            this.logPathLabel.Location = new System.Drawing.Point(182, 664);
+            this.logPathLabel.AutoEllipsis = true;
+            this.logPathLabel.Location = new System.Drawing.Point(328, 670);
             this.logPathLabel.Name = "logPathLabel";
-            this.logPathLabel.Size = new System.Drawing.Size(54, 18);
+            this.logPathLabel.Size = new System.Drawing.Size(400, 18);
             this.logPathLabel.TabIndex = 21;
             this.logPathLabel.Text = "label2";
             // 
@@ -297,37 +300,66 @@
             // 
             // progressBarOriginal
             // 
-            this.progressBarOriginal.Location = new System.Drawing.Point(711, 479);
+            this.progressBarOriginal.Location = new System.Drawing.Point(765, 485);
             this.progressBarOriginal.Name = "progressBarOriginal";
             this.progressBarOriginal.Size = new System.Drawing.Size(210, 23);
             this.progressBarOriginal.TabIndex = 24;
             // 
             // progressBarTransformed
             // 
-            this.progressBarTransformed.Location = new System.Drawing.Point(711, 535);
+            this.progressBarTransformed.Location = new System.Drawing.Point(765, 541);
             this.progressBarTransformed.Name = "progressBarTransformed";
             this.progressBarTransformed.Size = new System.Drawing.Size(210, 23);
             this.progressBarTransformed.TabIndex = 25;
             // 
             // progressBarLog
             // 
-            this.progressBarLog.Location = new System.Drawing.Point(711, 659);
+            this.progressBarLog.Location = new System.Drawing.Point(765, 665);
             this.progressBarLog.Name = "progressBarLog";
             this.progressBarLog.Size = new System.Drawing.Size(210, 23);
             this.progressBarLog.TabIndex = 26;
             // 
             // progressBarInput
             // 
-            this.progressBarInput.Location = new System.Drawing.Point(711, 593);
+            this.progressBarInput.Location = new System.Drawing.Point(765, 599);
             this.progressBarInput.Name = "progressBarInput";
             this.progressBarInput.Size = new System.Drawing.Size(210, 23);
             this.progressBarInput.TabIndex = 27;
+            // 
+            // numericUpDownSize
+            // 
+            this.numericUpDownSize.Location = new System.Drawing.Point(23, 505);
+            this.numericUpDownSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownSize.Name = "numericUpDownSize";
+            this.numericUpDownSize.Size = new System.Drawing.Size(120, 28);
+            this.numericUpDownSize.TabIndex = 28;
+            this.numericUpDownSize.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownSize.ValueChanged += new System.EventHandler(this.numericUpDownSize_ValueChanged);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(23, 471);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 28);
+            this.textBox1.TabIndex = 29;
+            this.textBox1.Text = "용량 설정";
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1001, 708);
+            this.ClientSize = new System.Drawing.Size(1007, 726);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.numericUpDownSize);
             this.Controls.Add(this.progressBarInput);
             this.Controls.Add(this.progressBarLog);
             this.Controls.Add(this.progressBarTransformed);
@@ -357,6 +389,7 @@
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -390,6 +423,8 @@
         private System.Windows.Forms.ProgressBar progressBarTransformed;
         private System.Windows.Forms.ProgressBar progressBarLog;
         private System.Windows.Forms.ProgressBar progressBarInput;
+        private System.Windows.Forms.NumericUpDown numericUpDownSize;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 
