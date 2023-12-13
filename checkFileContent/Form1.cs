@@ -310,21 +310,21 @@ namespace checkFileContent
 
             try
             {
-                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                 {
                     //여기에 ExtractFileName 에서 리턴 받은 [atrans] 뒤에 오는 내용을 저장하고, 그거에 변환파일 내용이랑 확장자를 갖다 붙이자.
-                    //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".atxt");
-                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".atxt");
+                    //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".txt");
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".txt");
                      if (!File.Exists(transformedFileName))
                     {
                         Console.Write("no duplicate file name in transform area\n");
                         File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(fileData), Encoding.UTF8);
                     }
                 }
-                else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
-                    //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".abin");
-                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".abin");
+                    //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".bin");
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".bin");
                     
                     if (!File.Exists(transformedFileName))
                     {
@@ -352,24 +352,24 @@ namespace checkFileContent
             byte[] fileData = File.ReadAllBytes(file);
             try
             {
-                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                 {
-                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".atxt");
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".txt");
                 }
-                else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
-                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".abin");
+                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".bin");
                 }
 
                 // 중복 파일 이름 확인 및 새 이름 생성
                 transformedFileName = GenerateUniqueFileName(TRANSFORMEDPATH, Path.GetFileName(transformedFileName));
 
                 // 파일 쓰기
-                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                 {
                     File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2), Encoding.Unicode);
                 }
-                else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     File.WriteAllBytes(transformedFileName, File.ReadAllBytes(file));
                 }
@@ -389,27 +389,27 @@ namespace checkFileContent
 
                     try
                     {
-                        if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                        if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                         {
-                            transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".atxt");
+                            transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".txt");
                         }
-                        else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                        else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                         {
-                            transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".abin");
+                            transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".bin");
                         }
 
                         // 중복 파일 이름 확인 및 새 이름 생성
                         transformedFileName = GenerateUniqueFileName(TRANSFORMEDPATH, Path.GetFileName(transformedFileName));
 
                         // 파일 쓰기
-                        if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+                        if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                         {
-                            // .abin (바이너리)을 .atxt (텍스트)로 변환
+                            // .bin (바이너리)을 .txt (텍스트)로 변환
                             File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(File.ReadAllBytes(file)), Encoding.Unicode);
                         }
-                        else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                        else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                         {
-                            // .atxt (텍스트)를 .abin (바이너리)으로 변환
+                            // .txt (텍스트)를 .bin (바이너리)으로 변환
                             File.WriteAllBytes(transformedFileName, Encoding.Unicode.GetBytes(File.ReadAllText(file, Encoding.Unicode)));
                         }
                     }
@@ -462,13 +462,13 @@ namespace checkFileContent
             string extension = Path.GetExtension(file);
             string originalFilePath = Path.Combine(ORIGINALPATH, Path.GetFileName(file));
 
-            if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
+            if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
             {
-                WriteLog(logFilePath, "Extension check passed for .abin");
+                WriteLog(logFilePath, "Extension check passed for .bin");
             }
-            else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+            else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
             {
-                WriteLog(logFilePath, "Extension check passed for .abin");
+                WriteLog(logFilePath, "Extension check passed for .bin");
             }
             else
             {
@@ -500,7 +500,7 @@ namespace checkFileContent
 
             //로직 추가 - TargetFileName 으로 시작해도, 띄어쓰기가 뒤에 몇개 있는지 확인해야함.
             string trimmedFileName = fileName.Replace("[TargetFileName] ", "");
-            if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".abin") || trimmedFileName.Equals(".atxt"))
+            if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".bin") || trimmedFileName.Equals(".txt"))
             {
                 fileCounts[threadIndex].FailureCount++;
                 WriteLog(logFilePath, "File name error - valid Header, but other issues: " + fileName);
@@ -552,15 +552,25 @@ namespace checkFileContent
             try
             {
                 byte[] fileData = File.ReadAllBytes(file);
-                if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase) || extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
+                if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase) || extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
 
-                    //Console.Write("WOW : " + fileContent);
-                    string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (lines.Length > 0 && lines[0].StartsWith(headerToCheck))
+                    // 첫 줄만 확인하는 로직
+                    string firstLine;
+                    int firstNewLineIndex = fileContent.IndexOfAny(new[] { '\r', '\n' });
+                    if (firstNewLineIndex > -1)
                     {
-                        if (lines[0].Length > headerToCheck.Length && lines[0][headerToCheck.Length] != ' ')
+                        firstLine = fileContent.Substring(0, firstNewLineIndex);
+                    }
+                    else
+                    {
+                        firstLine = fileContent;
+                    }
+
+                    if (firstLine.StartsWith(headerToCheck))
+                    {
+                        if (firstLine.Length > headerToCheck.Length && firstLine[headerToCheck.Length] != ' ')
                         {
                             WriteLog(logFilePath, "File Header correct, it starts with [ATRANS] " + Path.GetFileName(file));
                             return true;
@@ -569,7 +579,6 @@ namespace checkFileContent
                         {
                             WriteLog(logFilePath, "File Header error: more than 1 space after [ATRANS]: " + Path.GetFileName(file));
                         }
-                        
                     }
                     else
                     {
