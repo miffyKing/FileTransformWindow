@@ -259,12 +259,12 @@ namespace checkFileContent
                 {
                     // 이진 파일 처리
                     byte[] fileData = File.ReadAllBytes(filePath);
-                    firstLine = Encoding.UTF8.GetString(fileData).Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)[0];
+                    firstLine = Encoding.Unicode.GetString(fileData).Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)[0];
                 }
                 else
                 {
                     // 텍스트 파일 처리
-                    firstLine = File.ReadLines(filePath, Encoding.UTF8).First();
+                    firstLine = File.ReadLines(filePath, Encoding.Unicode).First();
                 }
 
                 // '[ATRANS]' 문자열 제거
@@ -347,6 +347,8 @@ namespace checkFileContent
             string afterATRANSName = ExtractFileName(file);
             string transformedFileName = "";
 
+            //string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
+            byte[] fileData = File.ReadAllBytes(file);
             try
             {
                 if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
@@ -364,7 +366,7 @@ namespace checkFileContent
                 // 파일 쓰기
                 if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase))
                 {
-                    File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(File.ReadAllBytes(file)), Encoding.UTF8);
+                    File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2), Encoding.Unicode);
                 }
                 else if (extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
                 {
@@ -552,7 +554,9 @@ namespace checkFileContent
                 byte[] fileData = File.ReadAllBytes(file);
                 if (extension.Equals(".abin", StringComparison.OrdinalIgnoreCase) || extension.Equals(".atxt", StringComparison.OrdinalIgnoreCase))
                 {
-                    string fileContent = Encoding.UTF8.GetString(fileData);
+                    string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
+
+                    Console.Write("WOW : " + fileContent);
                     string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
                     if (lines.Length > 0 && lines[0].StartsWith(headerToCheck))
                     {
@@ -607,11 +611,13 @@ namespace checkFileContent
             }
 
             byte[] fileData = File.ReadAllBytes(file);
-            string fileContent = Encoding.UTF8.GetString(fileData);
+            string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
             string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             
             headerName = lines[0].Substring(headerPrefix.Length).Trim(); // Prefix 제거 및 공백 제거
-            
+
+
+            Console.WriteLine("header name is : " + headerName + " Filename is : " + fileName);
             if (fileName == headerName)
             {
                 WriteLog(logFilePath, "File Name Contents and Header Contents matches :" + Path.GetFileName(file));
@@ -1074,10 +1080,11 @@ namespace checkFileContent
         private void label2_Click(object sender, EventArgs e)
         {
         }
-
         private void transformedPathLabel_Click(object sender, EventArgs e)
         {
-
+        }
+        private void folderBrowserDialog1_HelpRequest(object sender, EventArgs e)
+        {
         }
     }
 }

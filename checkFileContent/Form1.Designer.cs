@@ -176,6 +176,10 @@
             this.panel4.Size = new System.Drawing.Size(3, 420);
             this.panel4.TabIndex = 11;
             // 
+            // folderBrowserDialog1
+            // 
+            this.folderBrowserDialog1.HelpRequest += new System.EventHandler(this.folderBrowserDialog1_HelpRequest);
+            // 
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(16, 479);
