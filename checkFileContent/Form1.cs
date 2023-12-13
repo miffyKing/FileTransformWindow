@@ -1,4 +1,5 @@
-﻿using MetroFramework.Forms;     //이쁘게 보이게 하고싶습니다.
+﻿using checkFileContent.Properties;
+using MetroFramework.Forms;     //이쁘게 보이게 하고싶습니다.
 
 using System;
 using System.Collections.Concurrent;
@@ -62,6 +63,8 @@ namespace checkFileContent
             InitializeThreadsAndLabels();       //UI 표시용 invoke
 
             InitializeFileListUpdateTimer();
+
+            //openSettingButton.Click += new EventHandler(this.openSettingButton_Click); // 이벤트 핸들러 연결
 
             DeleteOldLogs();                    //오래된 로그파일 지우기
             UpdateStatus("파일 변환 전");
@@ -717,7 +720,6 @@ namespace checkFileContent
             }
             catch (InvalidAsynchronousStateException)
             {
-              
             }
         }
 
@@ -754,7 +756,6 @@ namespace checkFileContent
             }
             catch (InvalidAsynchronousStateException)
             {
-                // 예외 처리 로직
             }
         }
 
@@ -1124,13 +1125,21 @@ namespace checkFileContent
 
         }
 
-        private void numericUpDownSize_ValueChanged(object sender, EventArgs e)
+        private void openSettingButton_Click(object sender, EventArgs e)
         {
-            userInputSize = (long)numericUpDownSize.Value * 1024;
+            SettingsUI settingsForm = new SettingsUI();
+            settingsForm.OnApplySettings += ApplyNewSettings;
+            settingsForm.Show(); // SettingsUI 폼을 엽니다
+        }
+
+        public void ApplyNewSettings(long newSize)
+        {
+            userInputSize = newSize;
             progressBarOriginal.Maximum = (int)userInputSize; // 1GB, MB 단위로 표시
             progressBarTransformed.Maximum = (int)userInputSize;
             progressBarInput.Maximum = (int)userInputSize;
             progressBarLog.Maximum = (int)userInputSize;
+            UpdateProgressBars(); // ProgressBar 업데이트 메소드 호출
         }
     }
 }

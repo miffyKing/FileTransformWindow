@@ -57,7 +57,7 @@
             this.progressBarLog = new System.Windows.Forms.ProgressBar();
             this.progressBarInput = new System.Windows.Forms.ProgressBar();
             this.numericUpDownSize = new System.Windows.Forms.NumericUpDown();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.openSettingButton = new System.Windows.Forms.Button();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -70,7 +70,7 @@
             this.errorLogCheck.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.errorLogCheck.FlatAppearance.BorderSize = 5;
             this.errorLogCheck.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.errorLogCheck.Location = new System.Drawing.Point(14, 191);
+            this.errorLogCheck.Location = new System.Drawing.Point(14, 105);
             this.errorLogCheck.Name = "errorLogCheck";
             this.errorLogCheck.Size = new System.Drawing.Size(104, 63);
             this.errorLogCheck.TabIndex = 1;
@@ -133,7 +133,7 @@
             this.DirectUpload.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("DirectUpload.BackgroundImage")));
             this.DirectUpload.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.DirectUpload.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.DirectUpload.Location = new System.Drawing.Point(14, 301);
+            this.DirectUpload.Location = new System.Drawing.Point(14, 215);
             this.DirectUpload.Name = "DirectUpload";
             this.DirectUpload.Size = new System.Drawing.Size(104, 72);
             this.DirectUpload.TabIndex = 9;
@@ -185,7 +185,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(162, 485);
+            this.button3.Location = new System.Drawing.Point(96, 485);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(144, 48);
             this.button3.TabIndex = 13;
@@ -195,7 +195,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(162, 541);
+            this.button4.Location = new System.Drawing.Point(96, 541);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(144, 48);
             this.button4.TabIndex = 14;
@@ -205,7 +205,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(162, 599);
+            this.button5.Location = new System.Drawing.Point(96, 599);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(144, 48);
             this.button5.TabIndex = 15;
@@ -215,7 +215,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(162, 655);
+            this.button6.Location = new System.Drawing.Point(96, 655);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(144, 48);
             this.button6.TabIndex = 16;
@@ -245,7 +245,7 @@
             // originalPathlabel
             // 
             this.originalPathlabel.AutoEllipsis = true;
-            this.originalPathlabel.Location = new System.Drawing.Point(328, 494);
+            this.originalPathlabel.Location = new System.Drawing.Point(262, 494);
             this.originalPathlabel.Name = "originalPathlabel";
             this.originalPathlabel.Size = new System.Drawing.Size(400, 28);
             this.originalPathlabel.TabIndex = 18;
@@ -255,7 +255,7 @@
             // transformedPathLabel
             // 
             this.transformedPathLabel.AutoEllipsis = true;
-            this.transformedPathLabel.Location = new System.Drawing.Point(328, 554);
+            this.transformedPathLabel.Location = new System.Drawing.Point(262, 554);
             this.transformedPathLabel.Name = "transformedPathLabel";
             this.transformedPathLabel.Size = new System.Drawing.Size(400, 18);
             this.transformedPathLabel.TabIndex = 19;
@@ -265,7 +265,7 @@
             // inputPathLabel
             // 
             this.inputPathLabel.AutoEllipsis = true;
-            this.inputPathLabel.Location = new System.Drawing.Point(328, 614);
+            this.inputPathLabel.Location = new System.Drawing.Point(262, 614);
             this.inputPathLabel.Name = "inputPathLabel";
             this.inputPathLabel.Size = new System.Drawing.Size(400, 18);
             this.inputPathLabel.TabIndex = 20;
@@ -274,7 +274,7 @@
             // logPathLabel
             // 
             this.logPathLabel.AutoEllipsis = true;
-            this.logPathLabel.Location = new System.Drawing.Point(328, 670);
+            this.logPathLabel.Location = new System.Drawing.Point(262, 670);
             this.logPathLabel.Name = "logPathLabel";
             this.logPathLabel.Size = new System.Drawing.Size(400, 18);
             this.logPathLabel.TabIndex = 21;
@@ -300,65 +300,59 @@
             // 
             // progressBarOriginal
             // 
-            this.progressBarOriginal.Location = new System.Drawing.Point(765, 485);
+            this.progressBarOriginal.Location = new System.Drawing.Point(699, 485);
             this.progressBarOriginal.Name = "progressBarOriginal";
             this.progressBarOriginal.Size = new System.Drawing.Size(210, 23);
             this.progressBarOriginal.TabIndex = 24;
             // 
             // progressBarTransformed
             // 
-            this.progressBarTransformed.Location = new System.Drawing.Point(765, 541);
+            this.progressBarTransformed.Location = new System.Drawing.Point(699, 541);
             this.progressBarTransformed.Name = "progressBarTransformed";
             this.progressBarTransformed.Size = new System.Drawing.Size(210, 23);
             this.progressBarTransformed.TabIndex = 25;
             // 
             // progressBarLog
             // 
-            this.progressBarLog.Location = new System.Drawing.Point(765, 665);
+            this.progressBarLog.Location = new System.Drawing.Point(699, 665);
             this.progressBarLog.Name = "progressBarLog";
             this.progressBarLog.Size = new System.Drawing.Size(210, 23);
             this.progressBarLog.TabIndex = 26;
             // 
             // progressBarInput
             // 
-            this.progressBarInput.Location = new System.Drawing.Point(765, 599);
+            this.progressBarInput.Location = new System.Drawing.Point(699, 599);
             this.progressBarInput.Name = "progressBarInput";
             this.progressBarInput.Size = new System.Drawing.Size(210, 23);
             this.progressBarInput.TabIndex = 27;
             // 
             // numericUpDownSize
             // 
-            this.numericUpDownSize.Location = new System.Drawing.Point(23, 505);
-            this.numericUpDownSize.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.numericUpDownSize.Location = new System.Drawing.Point(0, 0);
             this.numericUpDownSize.Name = "numericUpDownSize";
             this.numericUpDownSize.Size = new System.Drawing.Size(120, 28);
-            this.numericUpDownSize.TabIndex = 28;
-            this.numericUpDownSize.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDownSize.ValueChanged += new System.EventHandler(this.numericUpDownSize_ValueChanged);
+            this.numericUpDownSize.TabIndex = 31;
             // 
-            // textBox1
+            // openSettingButton
             // 
-            this.textBox1.Location = new System.Drawing.Point(14, 471);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(129, 28);
-            this.textBox1.TabIndex = 29;
-            this.textBox1.Text = "용량 설정(GB)";
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.openSettingButton.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.openSettingButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("openSettingButton.BackgroundImage")));
+            this.openSettingButton.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.openSettingButton.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.openSettingButton.Location = new System.Drawing.Point(14, 336);
+            this.openSettingButton.Name = "openSettingButton";
+            this.openSettingButton.Size = new System.Drawing.Size(104, 72);
+            this.openSettingButton.TabIndex = 30;
+            this.openSettingButton.Text = "설정";
+            this.openSettingButton.UseVisualStyleBackColor = false;
+            this.openSettingButton.Click += new System.EventHandler(this.openSettingButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1007, 726);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.openSettingButton);
             this.Controls.Add(this.numericUpDownSize);
             this.Controls.Add(this.progressBarInput);
             this.Controls.Add(this.progressBarLog);
@@ -424,7 +418,7 @@
         private System.Windows.Forms.ProgressBar progressBarLog;
         private System.Windows.Forms.ProgressBar progressBarInput;
         private System.Windows.Forms.NumericUpDown numericUpDownSize;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button openSettingButton;
     }
 }
 
