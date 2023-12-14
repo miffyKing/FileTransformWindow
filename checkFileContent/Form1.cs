@@ -1,4 +1,4 @@
-﻿using checkFileContent.Properties;
+﻿
 using MetroFramework.Forms;     //이쁘게 보이게 하고싶습니다.
 
 using System;
@@ -41,9 +41,7 @@ namespace checkFileContent
         private static string LOGPATH = "..\\DATAS\\log\\";
         private static string ERRORPATH = Path.Combine(LOGPATH, "errorLog");
         private static long userInputSize = 1024;
-        /*        private FileSystemWatcher[] watchers;           //파일시스템와처를 클래스레벨에서 유지하고 있어야함.*/
-
-        private bool isSpaceLimitWarningShown = false; // 클래스 레벨 변수 추가
+      
         private SettingsUI settingsFormInit = new SettingsUI(LOGPATH, ERRORPATH);
 
         public Form1()
@@ -53,21 +51,16 @@ namespace checkFileContent
             {
                 fileCounts[i] = new FileProcessCount { SuccessCount = 0, FailureCount = 0 };
             }
-
             RunGenerateFolder();                //폴더 생성
 
-            userInputSize = Properties.Settings.Default.UserInputSize;
+            userInputSize = Properties.Settings.Default.UserInputSize;  //inputSize 이전 설정값 가져옴.
 
             InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
-            //InitializeFolderDeletionWatcher();
 
             InitializeThreadsAndLabels();       //UI 표시용 invoke
 
             InitializeFileListUpdateTimer();
-            
-            //사용자가 사전 설정한 용량이 가져와진다.
 
-            //openSettingButton.Click += new EventHandler(this.openSettingButton_Click); // 이벤트 핸들러 연결
             settingsFormInit.DeleteOldLogs();                    //오래된 로그파일 지우기
             UpdateStatus("파일 변환 전");
             UpdatePathLabel();
@@ -81,8 +74,6 @@ namespace checkFileContent
             {
                 watcher.Dispose();
             }   //폴더 변경했을때, 이전 폴더는 해제해주는 로직임. -> 되는지 확인해 봐야해요
-
-
             watcher = new FileSystemWatcher();
             watcher.Path = Path.GetFullPath(@INPUTROUTE);
             watcher.Filter = "*.*";
@@ -131,8 +122,6 @@ namespace checkFileContent
                 conversionThreads[i].Start();
                 UpdateFileCountLabel(threadIndex);
             }
-
-            //폴더 저장공간 표시.
             progressBarOriginal.Maximum = (int)userInputSize; // 1GB, MB 단위로 표시
             progressBarTransformed.Maximum = (int)userInputSize;
             progressBarInput.Maximum = (int)userInputSize;
@@ -208,9 +197,7 @@ namespace checkFileContent
                     UpdateThreadLabel(threadIndex, "변환 종료.");
                     Thread.Sleep(1000);
                     SleepTenSecond(threadIndex);
-                    //Thread.Sleep(10000);
                     UpdateThreadLabel(threadIndex, $"변환 파일 입력 대기");
-                    // 중단 신호를 다시 확인
                     if (!isRunning)
                         break;
                 }
@@ -263,17 +250,13 @@ namespace checkFileContent
                 string extension = Path.GetExtension(filePath);
                 if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                 {
-                    // 이진 파일 처리
                     byte[] fileData = File.ReadAllBytes(filePath);
                     firstLine = Encoding.Unicode.GetString(fileData).Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)[0];
                 }
                 else
                 {
-                    // 텍스트 파일 처리
                     firstLine = File.ReadLines(filePath, Encoding.Unicode).First();
                 }
-
-                // '[ATRANS]' 문자열 제거
                 if (firstLine.StartsWith("[ATRANS]"))
                 {
                     return firstLine.Replace("[ATRANS]", "").Trim();
@@ -302,49 +285,6 @@ namespace checkFileContent
             return fullFilePath;
         }
 
-        /*private void TransformFile(string file, int threadIndex)
-        {
-            Console.Write("Processing File: " + file + "\n");
-            string extension = Path.GetExtension(file);
-
-            // "[TargetFileName] "을 제거한 파일명
-            string trimmedFileName = Path.GetFileNameWithoutExtension(file).Replace("[TargetFileName] ", "");
-            string transformedFileName = "";
-            byte[] fileData = File.ReadAllBytes(file);
-            string afterATRANSName = ExtractFileName(file);
-
-            try
-            {
-                if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
-                {
-                    //여기에 ExtractFileName 에서 리턴 받은 [atrans] 뒤에 오는 내용을 저장하고, 그거에 변환파일 내용이랑 확장자를 갖다 붙이자.
-                    //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".txt");
-                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".txt");
-                     if (!File.Exists(transformedFileName))
-                    {
-                        Console.Write("no duplicate file name in transform area\n");
-                        File.WriteAllText(transformedFileName, Encoding.UTF8.GetString(fileData), Encoding.UTF8);
-                    }
-                }
-                else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
-                {
-                    //transformedFileName = Path.Combine(TRANSFORMEDPATH, trimmedFileName + ".bin");
-                    transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".bin");
-                    
-                    if (!File.Exists(transformedFileName))
-                    {
-                        Console.Write("no duplicate file name in transform area\n");
-                        File.WriteAllBytes(transformedFileName, fileData);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error in TransformFile: " + ex.Message);
-                return;
-            }
-        }
-*/
         //-- UTF16 Version --
         private void TransformFile(string file, int threadIndex)
         {
@@ -352,8 +292,6 @@ namespace checkFileContent
             string extension = Path.GetExtension(file);
             string afterATRANSName = ExtractFileName(file);
             string transformedFileName = "";
-
-            //string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
             byte[] fileData = File.ReadAllBytes(file);
             try
             {
@@ -384,45 +322,6 @@ namespace checkFileContent
                 Console.WriteLine("Error in TransformFile: " + ex.Message);
             }
         }
-
-        /*        private void TransformFile(string file, int threadIndex)
-                {
-                    Console.Write("Processing File: " + file + "\n");
-                    string extension = Path.GetExtension(file);
-                    string afterATRANSName = ExtractFileName(file);
-                    string transformedFileName = "";
-
-                    try
-                    {
-                        if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
-                        {
-                            transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".txt");
-                        }
-                        else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
-                        {
-                            transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".bin");
-                        }
-
-                        // 중복 파일 이름 확인 및 새 이름 생성
-                        transformedFileName = GenerateUniqueFileName(TRANSFORMEDPATH, Path.GetFileName(transformedFileName));
-
-                        // 파일 쓰기
-                        if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
-                        {
-                            // .bin (바이너리)을 .txt (텍스트)로 변환
-                            File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(File.ReadAllBytes(file)), Encoding.Unicode);
-                        }
-                        else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
-                        {
-                            // .txt (텍스트)를 .bin (바이너리)으로 변환
-                            File.WriteAllBytes(transformedFileName, Encoding.Unicode.GetBytes(File.ReadAllText(file, Encoding.Unicode)));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Error in TransformFile: " + ex.Message);
-                    }
-                }*/
 
         private bool checkTransformFunction(string file, int threadIndex, bool isDuplicated)
         {
@@ -560,7 +459,6 @@ namespace checkFileContent
                 if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase) || extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
-
                     // 첫 줄만 확인하는 로직
                     string firstLine;
                     int firstNewLineIndex = fileContent.IndexOfAny(new[] { '\r', '\n' });
@@ -630,21 +528,14 @@ namespace checkFileContent
             byte[] fileData = File.ReadAllBytes(file);
             string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
             string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-            //headerName = lines[0].Substring(headerPrefix.Length).Trim(); // Prefix 제거 및 공백 제거
             headerName = lines[0].Substring(headerPrefix.Length); // Prefix 제거 및 공백 제거
-
-
-            Console.WriteLine("header name is : " + headerName + " Filename is : " + fileName);
             if (fileName == headerName)
             {
                 headerName += fileIndex;
                 if (isDuplicated)
                 {
-                    // 파일 헤더에 인덱스 추가
                     UpdateFileHeaderWithIndex(file, fileIndex);
                 }
-                // isDuplicated 에 의해 잘려나간 (2) 의 내용을 [ATRANS] 파일명 뒤에 쓴다.
                 WriteLog(logFilePath, "File Name Contents and Header Contents matches :" + Path.GetFileName(file));
                 return true;
             }
@@ -659,15 +550,10 @@ namespace checkFileContent
         }
         private void UpdateFileHeaderWithIndex(string file, string headerToAdd)
         {
-            // 파일의 모든 줄을 읽기
             List<string> lines = File.ReadAllLines(file, Encoding.Unicode).ToList();
-
             if (lines.Count > 0)
             {
-                // 첫 번째 줄(헤더)에 인덱스 추가
                 lines[0] = lines[0] + headerToAdd;
-
-                // 변경된 내용으로 파일 다시 쓰기
                 File.WriteAllLines(file, lines, Encoding.Unicode);
             }
         }
@@ -802,10 +688,7 @@ namespace checkFileContent
             {
                 fileListUpdateTimer.Stop();
                 MessageBox.Show("경고: 하나 이상의 폴더가 삭제되어 프로그램을 종료합니다!", "폴더 삭제 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                
                 Application.Exit(); // 프로그램 종료
-
                 return; // 폴더가 없으면 나머지 업데이트를 중단
             }
             progressBarOriginal.Value = Math.Min((int)(GetDirectorySize(ORIGINALPATH) / (1024L * 1024L)), progressBarOriginal.Maximum);
@@ -827,9 +710,7 @@ namespace checkFileContent
                 //isSpaceLimitWarningShown = true; // 플래그 설정
                 fileListUpdateTimer.Stop();
                 MessageBox.Show("경고: 저장 공간 제한에 도달했습니다!", "저장 공간 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                
                 Application.Exit(); // 프로그램 종료
-
                 return; // 폴더가 없으면 나머지 업데이트를 중단
             }
         }
@@ -923,7 +804,6 @@ namespace checkFileContent
             openFileDialog.Filter = "All files (*.*)|*.*"; // 필요한 파일 형식에 맞게 필터 조정
             openFileDialog.Multiselect = false; // 단일 파일 선택
 
-            // 파일 탐색기를 열고 사용자가 파일을 선택하면
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string selectedFilePath = openFileDialog.FileName;
@@ -969,22 +849,15 @@ namespace checkFileContent
             using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
             {
                 folderBrowserDialog.Description = "Select the Original Folder";
-
-                // 기본 경로 설정 (옵션)
                 folderBrowserDialog.SelectedPath = ORIGINALPATH;
-
-                // 폴더 대화 상자 표시
                 DialogResult result = folderBrowserDialog.ShowDialog();
 
-                // 사용자가 OK를 눌렀는지 확인
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
-                    // originalPath 변수에 선택된 경로 할당
                     string prevORIGINALPATH = ORIGINALPATH;
                     ORIGINALPATH = folderBrowserDialog.SelectedPath;
                     if (CheckDupPaths() == true)
                     {
-                        //중복 경로가 존재하여 폴더 변경에 실패했다는 알람 1회 출력 후
                         MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         ORIGINALPATH = prevORIGINALPATH;
                     }
@@ -998,21 +871,14 @@ namespace checkFileContent
             using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
             {
                 folderBrowserDialog.Description = "Select the transformed Folder";
-
-                // 기본 경로 설정 (옵션)
                 folderBrowserDialog.SelectedPath = TRANSFORMEDPATH;
 
-                // 폴더 대화 상자 표시
                 DialogResult result = folderBrowserDialog.ShowDialog();
-
-                // 사용자가 OK를 눌렀는지 확인
                
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
-                    // originalPath 변수에 선택된 경로 할당
                     string prevTRANSFORMPATH = TRANSFORMEDPATH;
                     TRANSFORMEDPATH = folderBrowserDialog.SelectedPath;
-
                     if(CheckDupPaths() == true)
                     {
                         MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1028,17 +894,11 @@ namespace checkFileContent
             using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
             {
                 folderBrowserDialog.Description = "Select the input Folder";
-
-                // 기본 경로 설정 (옵션)
                 folderBrowserDialog.SelectedPath =  INPUTROUTE;
-
-                // 폴더 대화 상자 표시
                 DialogResult result = folderBrowserDialog.ShowDialog();
 
-                // 사용자가 OK를 눌렀는지 확인
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
-                    // originalPath 변수에 선택된 경로 할당
                     string prevINPUT = INPUTROUTE;
                     INPUTROUTE = folderBrowserDialog.SelectedPath;
 
@@ -1059,25 +919,19 @@ namespace checkFileContent
             {
                 folderBrowserDialog.Description = "Select the log Folder";
 
-                // 기본 경로 설정 (옵션)
                 folderBrowserDialog.SelectedPath = LOGPATH;
-
-                // 폴더 대화 상자 표시
                 DialogResult result = folderBrowserDialog.ShowDialog();
 
-                // 사용자가 OK를 눌렀는지 확인
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
                     string prevLOG = LOGPATH;
 
-                    // originalPath 변수에 선택된 경로 할당
                     LOGPATH = folderBrowserDialog.SelectedPath;
                     
                     if (CheckDupPaths() == true)
                     {
                         MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         LOGPATH = prevLOG;
-
                     }
                     ERRORPATH = Path.Combine(LOGPATH, "errorLog");
                     Directory.CreateDirectory(ERRORPATH);
@@ -1102,18 +956,10 @@ namespace checkFileContent
 
         private void openSettingButton_Click(object sender, EventArgs e)
         {
-            /* if (settingsForm == null)
-             {
-                 Console.Write("no window setting so make new one\n");
-                 settingsForm = new SettingsUI(LOGPATH, ERRORPATH);
-                 settingsForm.OnApplySettings += ApplyNewSettings;
-                 settingsForm.FormClosed += (s, args) => settingsForm = null; // FormClosed 이벤트 핸들러 추가
-
-             }
-             settingsForm.Show(); // SettingsUI 폼을 엽니다*/
+            
             SettingsUI settingsForm = new SettingsUI(LOGPATH, ERRORPATH);
             settingsForm.OnApplySettings += ApplyNewSettings;
-            settingsForm.Show(); // SettingsUI 폼을 엽니다
+            settingsForm.Show();
         }
 
         public void ApplyNewSettings(long newSize)
