@@ -151,8 +151,11 @@ namespace checkFileContent
                 if (fileList.TryDequeue(out string filePath))
                 {
                     UpdateFileCountLabel(threadIndex);
+                    FileMetaData fileMetaData = new FileMetaData(filePath);
+
                     string prevName = filePath;
-                    filePath = CheckDupFileName(filePath, ORIGINALPATH);
+                    filePath = CheckDupFileName(fileMetaData.FilePath, ORIGINALPATH);
+                    fileMetaData = new FileMetaData(filePath);  //중복파일있어서 파일명 바뀌면 새로 메타데이터객체 생성. (세터 안쓰고..)
 
                     Thread.Sleep(500);
                     UpdateThreadLabel(threadIndex, "변환 시작");
@@ -160,23 +163,23 @@ namespace checkFileContent
 
                     try
                     {
-                        string originalFilePath = Path.Combine(ORIGINALPATH, Path.GetFileName(filePath));              
-                        string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(filePath) + ".txt");
+                        string originalFilePath = Path.Combine(ORIGINALPATH, fileMetaData.FileName);              
+                        string logFilePath = Path.Combine(LOGPATH, "log_" + fileMetaData.FileName + ".txt");
                         bool isDuplicated = false;
                         WriteLog(logFilePath, "Thread index :" + threadIndex + " Starts transrform");
-                        if (prevName != filePath)
+                        if (prevName != fileMetaData.FilePath)
                         {
                             isDuplicated = true;
                             WriteLog(logFilePath, "Duplicate name found in original path, File Name changed.");
                         }
 
-                        if (checkTransformFunction(filePath, threadIndex, isDuplicated) == true)
+                        if (checkTransformFunction(fileMetaData, threadIndex, isDuplicated) == true)
                         {
                             fileCounts[threadIndex].SuccessCount++;
                             UpdateFileCountLabel(threadIndex);  // 이거 변환프로세스 따라 값 바꿔야함
-                            TransformFile(filePath, threadIndex);
-                            WriteLog(logFilePath, "Thread index :" + threadIndex + ": File Transform SUCCESS :" + Path.GetFileName(filePath));
-                            successedFiles.Enqueue(new SuccessInfo(filePath, threadIndex));
+                            TransformFile(fileMetaData, threadIndex);
+                            WriteLog(logFilePath, "Thread index :" + threadIndex + ": File Transform SUCCESS :" + fileMetaData.FileName);
+                            successedFiles.Enqueue(new SuccessInfo(fileMetaData.FilePath, threadIndex));
                         }
                         else
                         {
@@ -187,7 +190,7 @@ namespace checkFileContent
                             UpdateThreadLabel(threadIndex, "변환 실패");
                             Thread.Sleep(1000);
                         }
-                        File.Move(filePath, originalFilePath);
+                        File.Move(fileMetaData.FilePath, originalFilePath);
                     }
                     catch (Exception ex)
                     {
@@ -285,34 +288,34 @@ namespace checkFileContent
         }
 
         //-- UTF16 Version --
-        private void TransformFile(string file, int threadIndex)
+        private void TransformFile(FileMetaData file, int threadIndex)
         {
-            string extension = Path.GetExtension(file);
-            string afterATRANSName = ExtractFileName(file);
+            //string extension = Path.GetExtension(file);
+            string afterATRANSName = ExtractFileName(file.FilePath);
             string transformedFileName = "";
-            byte[] fileData = File.ReadAllBytes(file);
+            //byte[] fileData = File.ReadAllBytes(file);
+            
             try
             {
-                if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
+                if (file.Extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                 {
                     transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".txt");
                 }
-                else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
+                else if (file.Extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
                     transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".bin");
                 }
 
                 // 중복 파일 이름 확인 및 새 이름 생성
                 transformedFileName = GenerateUniqueFileName(TRANSFORMEDPATH, Path.GetFileName(transformedFileName));
-
                 // 파일 쓰기
-                if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
+                if (file.Extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                 {
-                    File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2), Encoding.Unicode);
+                    File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2), Encoding.Unicode);
                 }
-                else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
+                else if (file.Extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
-                    File.WriteAllBytes(transformedFileName, File.ReadAllBytes(file));
+                    File.WriteAllBytes(transformedFileName, file.FileData);
                 }
             }
             catch (Exception ex)
@@ -320,92 +323,90 @@ namespace checkFileContent
             }
         }
 
-        private bool checkTransformFunction(string file, int threadIndex, bool isDuplicated)
+        private bool checkTransformFunction(FileMetaData file, int threadIndex, bool isDuplicated)
         {
+            Console.WriteLine("WWWWWWWWWWWWWWWWWWWWWWWWW\n");
             string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed", "Header Name no Match" };   
            
             if (checkExtension(file, threadIndex) == false)
             {
-                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[0]));
+                failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[0]));
                 return false;
             }
-                
+
             if (checkFileName(file, threadIndex) == false)
             {
-                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[1]));
+                failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[1]));
                 return false;
             }
-                
+
             if (checkFileSize(file, threadIndex) == false)
             {
-                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[2]));
+                failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[2]));
                 return false;
             }
-            
+
             if (checkFileHeader(file, threadIndex) == false)
             {
-                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[3]));
+                failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[3]));
                 return false;
             }
 
             if (checkHeaderAndName(file, threadIndex, isDuplicated) == false)
             {
-                failedFiles.Enqueue(new FailureInfo(file, threadIndex, errorReasons[4]));
+                failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[4]));
                 return false;
             }
-
             return true;
         }
 
-        bool checkExtension(string file, int threadIndex)
+        bool checkExtension(FileMetaData file, int threadIndex)
         {
-            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
-            string extension = Path.GetExtension(file);
-            string originalFilePath = Path.Combine(ORIGINALPATH, Path.GetFileName(file));
+            string logFilePath = Path.Combine(LOGPATH, "log_" + file.FileName + ".txt");
+            string originalFilePath = Path.Combine(ORIGINALPATH, file.FileName);
 
-            if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
+            if (file.Extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
             {
                 WriteLog(logFilePath, "Extension check passed for .bin");
             }
-            else if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
+            else if (file.Extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
             {
                 WriteLog(logFilePath, "Extension check passed for .bin");
             }
             else
             {
                 fileCounts[threadIndex].FailureCount++;
-                WriteLog(logFilePath, "Extension check Failed for filename" + file);
+                WriteLog(logFilePath, "Extension check Failed for filename" + file.FileName);
                 UpdateFileCountLabel(threadIndex);
-                File.Move(file, originalFilePath);
+                File.Move(file.FilePath, originalFilePath);
                 return false;
             }
             return true;
         }
 
-        bool checkFileName(string file, int threadIndex)
+        bool checkFileName(FileMetaData file, int threadIndex)
         {
-            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
-            string fileName = Path.GetFileName(file);
-            string originalFilePath = Path.Combine(ORIGINALPATH, fileName);
+            string logFilePath = Path.Combine(LOGPATH, "log_" + file.FileName + ".txt");
+            string originalFilePath = Path.Combine(ORIGINALPATH, file.FileName);
 
             //여기에서, [TargetFileName] 헤더 정확하게 확인하고, 띄어쓰기는 하나만, 반드시 하나만 있는지 확인하기.
             //또 [TargetFileName] .txt  이런거는 걸러내야하니까 유의하자.
-            if (!fileName.StartsWith("[TargetFileName] "))
+            if (!file.FileName.StartsWith("[TargetFileName] "))
             {
                 fileCounts[threadIndex].FailureCount++;
-                WriteLog(logFilePath, "File name error - Invalid Header, transformation failed: " + fileName);
-                File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
+                WriteLog(logFilePath, "File name error - Invalid Header, transformation failed: " + file.FileName);
+                File.Move(file.FilePath, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
 
             //로직 추가 - TargetFileName 으로 시작해도, 띄어쓰기가 뒤에 몇개 있는지 확인해야함.
-            string trimmedFileName = fileName.Replace("[TargetFileName] ", "");
+            string trimmedFileName = file.FileName.Replace("[TargetFileName] ", "");
             if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".bin") || trimmedFileName.Equals(".txt"))
             {
                 fileCounts[threadIndex].FailureCount++;
-                WriteLog(logFilePath, "File name error - valid Header, but other issues: " + fileName);
-                File.Move(file, originalFilePath);
+                WriteLog(logFilePath, "File name error - valid Header, but other issues: " + file.FileName);
+                File.Move(file.FilePath, originalFilePath);
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
@@ -414,48 +415,45 @@ namespace checkFileContent
             if (trimmedFileName[0] == '(' && trimmedFileName[2] == ')' && trimmedFileName.Length == 8)
             {
                 fileCounts[threadIndex].FailureCount++;
-                WriteLog(logFilePath, "File name error - valid Header, but other issues: " + fileName);
-                File.Move(file, originalFilePath);
+                WriteLog(logFilePath, "File name error - valid Header, but other issues: " + file.FileName);
+                File.Move(file.FilePath, originalFilePath);
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
 
-            WriteLog(logFilePath, "File Name check PASSED for " + fileName);
+            WriteLog(logFilePath, "File Name check PASSED for " + file.FileName);
             return true;
         }
 
-        bool checkFileSize(string file, int threadIndex)
+        bool checkFileSize(FileMetaData file, int threadIndex)
         {
-            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
-            string fileName = Path.GetFileName(file);
-            string originalFilePath = Path.Combine(ORIGINALPATH, fileName);
-            FileInfo fileInfo = new FileInfo(file);
+            string logFilePath = Path.Combine(LOGPATH, "log_" + file.FileName + ".txt");
+            string originalFilePath = Path.Combine(ORIGINALPATH, file.FileName);
+            FileInfo fileInfo = new FileInfo(file.FilePath);
 
             if (fileInfo.Length < 18)
             {
                 fileCounts[threadIndex].FailureCount++;
-                WriteLog(logFilePath, "File Size error, small then 18 byte, transformation failed" + fileName);
-                File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
+                WriteLog(logFilePath, "File Size error, small then 18 byte, transformation failed" + file.FileName);
+                File.Move(file.FilePath, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
-            WriteLog(logFilePath, "File Size check PASSED for " + fileName);
+            WriteLog(logFilePath, "File Size check PASSED for " + file.FileName);
             return true;
         }
 
-        bool checkFileHeader(string file, int threadIndex)
+        bool checkFileHeader(FileMetaData file, int threadIndex)
         {
-            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
-            string extension = Path.GetExtension(file);
-            string originalFilePath = Path.Combine(ORIGINALPATH , Path.GetFileName(file));
+            string logFilePath = Path.Combine(LOGPATH, "log_" + file.FileName + ".txt");
+            string originalFilePath = Path.Combine(ORIGINALPATH , file.FileName);
             const string headerToCheck = "[ATRANS] ";
 
             try
             {
-                byte[] fileData = File.ReadAllBytes(file);
-                if (extension.Equals(".bin", StringComparison.OrdinalIgnoreCase) || extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
+                if (file.Extension.Equals(".bin", StringComparison.OrdinalIgnoreCase) || file.Extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
-                    string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
+                    string fileContent = Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2);
                     // 첫 줄만 확인하는 로직
                     string firstLine;
                     int firstNewLineIndex = fileContent.IndexOfAny(new[] { '\r', '\n' });
@@ -472,17 +470,17 @@ namespace checkFileContent
                     {
                         if (firstLine.Length > headerToCheck.Length && firstLine[headerToCheck.Length] != ' ')
                         {
-                            WriteLog(logFilePath, "File Header correct, it starts with [ATRANS] " + Path.GetFileName(file));
+                            WriteLog(logFilePath, "File Header correct, it starts with [ATRANS] " + file.FileName);
                             return true;
                         }
                         else
                         {
-                            WriteLog(logFilePath, "File Header error: more than 1 space after [ATRANS]: " + Path.GetFileName(file));
+                            WriteLog(logFilePath, "File Header error: more than 1 space after [ATRANS]: " + file.FileName);
                         }
                     }
                     else
                     {
-                        WriteLog(logFilePath, "File Header error: Should start with [ATRANS] : " + Path.GetFileName(file));
+                        WriteLog(logFilePath, "File Header error: Should start with [ATRANS] : " + file.FileName);
                     }
                 }
             }
@@ -492,17 +490,17 @@ namespace checkFileContent
             }
             // 예외 발생 시 또는 조건 불만족 시 false 반환
             fileCounts[threadIndex].FailureCount++;
-            File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
+            File.Move(file.FilePath, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
             UpdateFileCountLabel(threadIndex);
             return false;
         }
 
-        bool checkHeaderAndName(string file, int threadIndex, bool isDuplicated)
+        bool checkHeaderAndName(FileMetaData file, int threadIndex, bool isDuplicated)
         {
-            string logFilePath = Path.Combine(LOGPATH, "log_" + Path.GetFileName(file) + ".txt");
-            string fileName = Path.GetFileNameWithoutExtension(file); // 확장자를 제외한 파일명
+            string logFilePath = Path.Combine(LOGPATH, "log_" + file.FileName + ".txt");
+            string fileName = file.FileNameWithoutExtension;
             string headerName;
-            string originalFilePath = Path.Combine(ORIGINALPATH, Path.GetFileName(file));
+            string originalFilePath = Path.Combine(ORIGINALPATH, file.FileName);
             
             const string fileNamePrefix = "[TargetFileName] ";
             const string headerPrefix = "[ATRANS] ";
@@ -520,9 +518,7 @@ namespace checkFileContent
                     fileName = fileName.Substring(0, lastIndex);
                 }
             }
-
-            byte[] fileData = File.ReadAllBytes(file);
-            string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
+            string fileContent = Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2);
             string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             headerName = lines[0].Substring(headerPrefix.Length); // Prefix 제거 및 공백 제거
             if (fileName == headerName)
@@ -530,16 +526,16 @@ namespace checkFileContent
                 headerName += fileIndex;
                 if (isDuplicated)
                 {
-                    UpdateFileHeaderWithIndex(file, fileIndex);
+                    UpdateFileHeaderWithIndex(file.FilePath, fileIndex);
                 }
-                WriteLog(logFilePath, "File Name Contents and Header Contents matches :" + Path.GetFileName(file));
+                WriteLog(logFilePath, "File Name Contents and Header Contents matches :" + file.FileName);
                 return true;
             }
             else
             {
-                WriteLog(logFilePath, "Mismatch between File Name Contents and Header Contents : " + Path.GetFileName(file));
+                WriteLog(logFilePath, "Mismatch between File Name Contents and Header Contents : " + file.FileName);
                 fileCounts[threadIndex].FailureCount++;
-                File.Move(file, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
+                File.Move(file.FilePath, originalFilePath); //이거도 나중에 없애고 변환한 후에로 바꿔야함.
                 UpdateFileCountLabel(threadIndex);
                 return false;
             }
