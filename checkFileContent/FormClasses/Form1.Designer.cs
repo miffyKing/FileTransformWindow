@@ -300,6 +300,7 @@
             this.fileListBox.Name = "fileListBox";
             this.fileListBox.Size = new System.Drawing.Size(297, 292);
             this.fileListBox.TabIndex = 23;
+            this.fileListBox.SelectedIndexChanged += new System.EventHandler(this.fileListBox_SelectedIndexChanged);
             // 
             // progressBarOriginal
             // 

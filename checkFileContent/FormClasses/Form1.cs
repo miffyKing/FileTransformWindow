@@ -235,9 +235,9 @@ namespace checkFileContent
                 {
                     firstLine = File.ReadLines(filePath, Encoding.Unicode).First();
                 }
-                if (firstLine.StartsWith("[ATRANS]"))
+                if (firstLine.StartsWith("[ATRANS] "))
                 {
-                    return firstLine.Replace("[ATRANS]", "").Trim();
+                    return firstLine.Replace("[ATRANS] ", "").Trim();
                 }
 
                 return firstLine;
@@ -281,7 +281,22 @@ namespace checkFileContent
                 // 파일 쓰기
                 if (file.Extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                 {
-                    File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2), Encoding.Unicode);
+                    /*byte[] bom = file.FileData.Take(2).ToArray();
+                    string content = Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2);
+                    // BOM을 먼저 기록하고 변환된 내용을 파일에 쓰기
+                    File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(bom) + content, Encoding.Unicode);
+*/
+                    if (file.FileData.Length >= 2 && file.FileData[0] == 0xFF && file.FileData[1] == 0xFE)
+                    {
+                        // BOM을 제외하고 내용을 파일에 쓰기
+                        File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2), Encoding.Unicode);
+                    }
+                    else
+                    {
+                        // BOM이 없는 경우, 전체 데이터를 그대로 사용
+                        File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(file.FileData), Encoding.Unicode);
+                    }
+                    //File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2), Encoding.Unicode);
                 }
                 else if (file.Extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
@@ -462,7 +477,7 @@ namespace checkFileContent
             }
             else
             {
-                handleFailure(file, threadIndex, "File Header & Name error - Target Name And Header MisMatch for : ");
+                handleFailure(file, threadIndex, "File Header & Name error - Target Name And Header MisMatch for : "   );
                 return false;
             }
         }
@@ -480,7 +495,8 @@ namespace checkFileContent
             fileCounts[threadIndex].FailureCount++;
             WriteLog(file.LogPath, errorReason + file.FileName);
             UpdateFileCountLabel(threadIndex);
-            failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReason));
+            
+            //failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReason));
             File.Move(file.FilePath, file.OriginalPath);
         }
 
@@ -865,6 +881,11 @@ namespace checkFileContent
 
         private void Form1_Load(object sender, EventArgs e)
         {
+        }
+
+        private void fileListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
