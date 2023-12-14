@@ -47,6 +47,7 @@ namespace checkFileContent
         /*        private FileSystemWatcher[] watchers;           //파일시스템와처를 클래스레벨에서 유지하고 있어야함.*/
 
         private bool isSpaceLimitWarningShown = false; // 클래스 레벨 변수 추가
+        private SettingsUI settingsFormInit = new SettingsUI(LOGPATH, ERRORPATH);
 
         public Form1()
         {
@@ -57,6 +58,9 @@ namespace checkFileContent
             }
 
             RunGenerateFolder();                //폴더 생성
+
+            userInputSize = Properties.Settings.Default.UserInputSize;
+
             InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
             //InitializeFolderDeletionWatcher();
 
@@ -64,9 +68,12 @@ namespace checkFileContent
 
             InitializeFileListUpdateTimer();
 
-            //openSettingButton.Click += new EventHandler(this.openSettingButton_Click); // 이벤트 핸들러 연결
+            
+            
+            //사용자가 사전 설정한 용량이 가져와진다.
 
-            DeleteOldLogs();                    //오래된 로그파일 지우기
+            //openSettingButton.Click += new EventHandler(this.openSettingButton_Click); // 이벤트 핸들러 연결
+            settingsFormInit.DeleteOldLogs();                    //오래된 로그파일 지우기
             UpdateStatus("파일 변환 전");
             UpdatePathLabel();
             this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);
@@ -860,33 +867,6 @@ namespace checkFileContent
             }
         }
 
-        private void DeleteOldLogs()
-        {
-            string logPath = LOGPATH;
-            string errorLogPath =ERRORPATH;
-
-            DeleteFileByDate(logPath, 7);
-            DeleteFileByDate(errorLogPath, 7);
-        }
-        private void DeleteFileByDate(string path, int days)
-        {
-            try
-            {
-                var files = Directory.GetFiles(path);
-                foreach (var file in files)
-                {
-                    FileInfo fileInfo = new FileInfo(file);
-                    if (fileInfo.CreationTime < DateTime.Now.AddDays(-1*days))
-                    {
-                        fileInfo.Delete();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error deleting old log files: {ex.Message}");
-            }
-        }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -1122,12 +1102,20 @@ namespace checkFileContent
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         private void openSettingButton_Click(object sender, EventArgs e)
         {
-            SettingsUI settingsForm = new SettingsUI();
+            /* if (settingsForm == null)
+             {
+                 Console.Write("no window setting so make new one\n");
+                 settingsForm = new SettingsUI(LOGPATH, ERRORPATH);
+                 settingsForm.OnApplySettings += ApplyNewSettings;
+                 settingsForm.FormClosed += (s, args) => settingsForm = null; // FormClosed 이벤트 핸들러 추가
+
+             }
+             settingsForm.Show(); // SettingsUI 폼을 엽니다*/
+            SettingsUI settingsForm = new SettingsUI(LOGPATH, ERRORPATH);
             settingsForm.OnApplySettings += ApplyNewSettings;
             settingsForm.Show(); // SettingsUI 폼을 엽니다
         }

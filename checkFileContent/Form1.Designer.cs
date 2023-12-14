@@ -56,12 +56,10 @@
             this.progressBarTransformed = new System.Windows.Forms.ProgressBar();
             this.progressBarLog = new System.Windows.Forms.ProgressBar();
             this.progressBarInput = new System.Windows.Forms.ProgressBar();
-            this.numericUpDownSize = new System.Windows.Forms.NumericUpDown();
             this.openSettingButton = new System.Windows.Forms.Button();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSize)).BeginInit();
             this.SuspendLayout();
             // 
             // errorLogCheck
@@ -326,13 +324,6 @@
             this.progressBarInput.Size = new System.Drawing.Size(210, 23);
             this.progressBarInput.TabIndex = 27;
             // 
-            // numericUpDownSize
-            // 
-            this.numericUpDownSize.Location = new System.Drawing.Point(0, 0);
-            this.numericUpDownSize.Name = "numericUpDownSize";
-            this.numericUpDownSize.Size = new System.Drawing.Size(120, 28);
-            this.numericUpDownSize.TabIndex = 31;
-            // 
             // openSettingButton
             // 
             this.openSettingButton.BackColor = System.Drawing.Color.LightSkyBlue;
@@ -353,7 +344,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1007, 726);
             this.Controls.Add(this.openSettingButton);
-            this.Controls.Add(this.numericUpDownSize);
             this.Controls.Add(this.progressBarInput);
             this.Controls.Add(this.progressBarLog);
             this.Controls.Add(this.progressBarTransformed);
@@ -383,7 +373,6 @@
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -417,7 +406,6 @@
         private System.Windows.Forms.ProgressBar progressBarTransformed;
         private System.Windows.Forms.ProgressBar progressBarLog;
         private System.Windows.Forms.ProgressBar progressBarInput;
-        private System.Windows.Forms.NumericUpDown numericUpDownSize;
         private System.Windows.Forms.Button openSettingButton;
     }
 }
