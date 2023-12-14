@@ -276,27 +276,18 @@ namespace checkFileContent
                 {
                     transformedFileName = Path.Combine(TRANSFORMEDPATH, afterATRANSName + ".bin");
                 }
-                // 중복 파일 이름 확인 및 새 이름 생성
                 transformedFileName = GenerateUniqueFileName(TRANSFORMEDPATH, Path.GetFileName(transformedFileName));
-                // 파일 쓰기
+
                 if (file.Extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
                 {
-                    /*byte[] bom = file.FileData.Take(2).ToArray();
-                    string content = Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2);
-                    // BOM을 먼저 기록하고 변환된 내용을 파일에 쓰기
-                    File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(bom) + content, Encoding.Unicode);
-*/
                     if (file.FileData.Length >= 2 && file.FileData[0] == 0xFF && file.FileData[1] == 0xFE)
                     {
-                        // BOM을 제외하고 내용을 파일에 쓰기
                         File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2), Encoding.Unicode);
                     }
                     else
                     {
-                        // BOM이 없는 경우, 전체 데이터를 그대로 사용
                         File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(file.FileData), Encoding.Unicode);
                     }
-                    //File.WriteAllText(transformedFileName, Encoding.Unicode.GetString(file.FileData, 2, file.FileData.Length - 2), Encoding.Unicode);
                 }
                 else if (file.Extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
                 {
@@ -371,7 +362,6 @@ namespace checkFileContent
                 handleFailure(file, threadIndex, "File Name Error - Invalid Header for filename : ");
                 return false;
             }
-
             //로직 추가 - TargetFileName 으로 시작해도, 띄어쓰기가 뒤에 몇개 있는지 확인해야함.
             string trimmedFileName = file.FileName.Replace("[TargetFileName] ", "");
             if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".bin") || trimmedFileName.Equals(".txt"))
@@ -379,7 +369,6 @@ namespace checkFileContent
                 handleFailure(file, threadIndex, "File Name Error - Valid Header but other Header Issue for : ");
                 return false;
             }
-
             //나중에 수정 제대로 해야함. 같은 파일이 10개 넘게 들어오면 이 로직을 통과하게 되어요.
             if (trimmedFileName[0] == '(' && trimmedFileName[2] == ')' && trimmedFileName.Length == 8)
             {
@@ -432,9 +421,7 @@ namespace checkFileContent
                     handleFailure(file, threadIndex, "File Header error - Incorrect format after [ATRANS] for : ");
                     return false;
                 }
-
-                // 파일 헤더가 정확히 "[ATRANS] "로 시작하는 경우 로그를 기록하고 true 반환
-                WriteLog(file.LogPath, "File Header correct, it starts with [ATRANS] " + file.FileName);
+                WriteLog(file.LogPath, "File Header correct, it starts with [ATRANS] " + file.FileName);    //success
                 return true;
             }
             catch (Exception ex)
@@ -450,7 +437,6 @@ namespace checkFileContent
             string headerName;
 
             fileName = fileName.Substring("[TargetFileName] ".Length); // Prefix 제거
-
             string fileIndex = "";
             if (file.IsDuplicated == true)
             {
@@ -477,7 +463,7 @@ namespace checkFileContent
             }
             else
             {
-                handleFailure(file, threadIndex, "File Header & Name error - Target Name And Header MisMatch for : "   );
+                handleFailure(file, threadIndex, "File Header & Name error - Target Name And Header MisMatch for : ");
                 return false;
             }
         }
@@ -491,12 +477,10 @@ namespace checkFileContent
         }
 
         private void handleFailure(FileMetaData file, int threadIndex, string errorReason)
-        {
+        {   //실패카운터 증가, 로그 기록, 라벨 업데이트, 파일 이동
             fileCounts[threadIndex].FailureCount++;
             WriteLog(file.LogPath, errorReason + file.FileName);
             UpdateFileCountLabel(threadIndex);
-            
-            //failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReason));
             File.Move(file.FilePath, file.OriginalPath);
         }
 
@@ -766,100 +750,50 @@ namespace checkFileContent
             return false;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void SelectAndSetFolderPath(ref string path, string description)
         {
             using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
             {
-                folderBrowserDialog.Description = "Select the Original Folder";
-                folderBrowserDialog.SelectedPath = ORIGINALPATH;
+                folderBrowserDialog.Description = description;
+                folderBrowserDialog.SelectedPath = path;
                 DialogResult result = folderBrowserDialog.ShowDialog();
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
-                    string prevORIGINALPATH = ORIGINALPATH;
-                    ORIGINALPATH = folderBrowserDialog.SelectedPath;
-                    if (CheckDupPaths() == true)
+                    string prevPath = path;
+                    path = folderBrowserDialog.SelectedPath;
+
+                    if (CheckDupPaths())
                     {
                         MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        ORIGINALPATH = prevORIGINALPATH;
+                        path = prevPath;
                     }
                     UpdatePathLabel();
                 }
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SelectAndSetFolderPath(ref ORIGINALPATH, "원본 파일이 저장될 폴더를 선택하세요.");
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
-            {
-                folderBrowserDialog.Description = "Select the transformed Folder";
-                folderBrowserDialog.SelectedPath = TRANSFORMEDPATH;
-
-                DialogResult result = folderBrowserDialog.ShowDialog();
-
-                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
-                {
-                    string prevTRANSFORMPATH = TRANSFORMEDPATH;
-                    TRANSFORMEDPATH = folderBrowserDialog.SelectedPath;
-                    if (CheckDupPaths() == true)
-                    {
-                        MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        TRANSFORMEDPATH = prevTRANSFORMPATH;
-                    }
-                    UpdatePathLabel();
-                }
-            }
+            SelectAndSetFolderPath(ref TRANSFORMEDPATH, "변환 파일이 저장될 폴더를 선택하세요.");
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
-            {
-                folderBrowserDialog.Description = "Select the input Folder";
-                folderBrowserDialog.SelectedPath = INPUTROUTE;
-                DialogResult result = folderBrowserDialog.ShowDialog();
-
-                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
-                {
-                    string prevINPUT = INPUTROUTE;
-                    INPUTROUTE = folderBrowserDialog.SelectedPath;
-
-                    if (CheckDupPaths() == true)
-                    {
-                        MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        INPUTROUTE = prevINPUT;
-                    }
-                    InitializeFileSystemWatcher();  //변경된 폴더에서 watcher 재실행 (기존거 삭제)
-                    UpdatePathLabel();
-                }
-            }
+            SelectAndSetFolderPath(ref INPUTROUTE, "파일이 입력될 폴더를 선택하세요.");
+            InitializeFileSystemWatcher();  //변경된 폴더에서 watcher 재실행 (기존거 삭제)
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
-            {
-                folderBrowserDialog.Description = "Select the log Folder";
-
-                folderBrowserDialog.SelectedPath = LOGPATH;
-                DialogResult result = folderBrowserDialog.ShowDialog();
-
-                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
-                {
-                    string prevLOG = LOGPATH;
-
-                    LOGPATH = folderBrowserDialog.SelectedPath;
-
-                    if (CheckDupPaths() == true)
-                    {
-                        MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        LOGPATH = prevLOG;
-                    }
-                    ERRORPATH = Path.Combine(LOGPATH, "errorLog");
-                    Directory.CreateDirectory(ERRORPATH);
-                    UpdatePathLabel();
-                }
-            }
+            SelectAndSetFolderPath(ref LOGPATH, "성공/실패 로그 파일이 저장될 폴더를 선택하세요.");
+            ERRORPATH = Path.Combine(LOGPATH, "errorLog");
+            Directory.CreateDirectory(ERRORPATH);
         }
 
         private void openSettingButton_Click(object sender, EventArgs e)
@@ -881,11 +815,6 @@ namespace checkFileContent
 
         private void Form1_Load(object sender, EventArgs e)
         {
-        }
-
-        private void fileListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
