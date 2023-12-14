@@ -30,6 +30,7 @@ namespace checkFileContent
             {
                 IsDuplicated = false;
             }
+
             FileName = Path.GetFileName(FilePath);
             FileNameWithoutExtension = Path.GetFileNameWithoutExtension(FilePath);
             Extension = Path.GetExtension(FilePath);

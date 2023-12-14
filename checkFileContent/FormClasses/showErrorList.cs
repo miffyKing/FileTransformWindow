@@ -1,13 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace checkFileContent
@@ -23,9 +16,6 @@ namespace checkFileContent
             InitializeComponent();
             failureQueue = failures;
             newErrorPath = newPath;
-
-            var handle = this.Handle;
-
 
             InitializeDataGridView();
             PopulateDataGridView(); 
@@ -52,18 +42,6 @@ namespace checkFileContent
             failureDataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
         }
-
-        /* private void PopulateDataGridView()
-         {
-             foreach (var failure in failureQueue)
-             {
-                 // Invoke를 사용하여 스레드 안전성을 보장
-                 this.Invoke((MethodInvoker)delegate
-                 {
-                     failureDataGridView.Rows.Add(failure.FileName, failure.ThreadIndex, failure.Reason);
-                 });
-             }
-         }*/
 
         private void PopulateDataGridView()
         {
@@ -142,13 +120,8 @@ namespace checkFileContent
 
         private void showErrorList_Load(object sender, EventArgs e)
         {
-            
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
 
         private void errorLogCheck_Click(object sender, EventArgs e)
         {
@@ -172,11 +145,6 @@ namespace checkFileContent
             {
                 MessageBox.Show($"Error opening the folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
     }
 }

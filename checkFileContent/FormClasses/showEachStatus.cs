@@ -1,13 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace checkFileContent
@@ -23,8 +16,6 @@ namespace checkFileContent
             failureQueue = failures;
             successQueue = successes;
             threadIndex = threadIdx;
-
-            var handle = this.Handle;
 
             InitializeDataGridView();
             PopulateDataGridViewFailure();
@@ -43,7 +34,6 @@ namespace checkFileContent
 
             FailureDataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             SuccessDataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
         }
 
         private void PopulateDataGridViewFailure()
@@ -105,11 +95,6 @@ namespace checkFileContent
         }
 
         private void showEachStatus_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void SuccessDataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }

@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace checkFileContent
@@ -62,8 +55,6 @@ namespace checkFileContent
         {
             currentFolderSizeLabel.Text = $"{(Properties.Settings.Default.UserInputSize / 1024)} GB";
             currentExpireDateLabel.Text = $"{(Properties.Settings.Default.ExpireDate)} 일";
-
-
         }
 
         private void folderSizeSave_Click(object sender, EventArgs e)
@@ -80,15 +71,6 @@ namespace checkFileContent
             //this.Hide();
         }
 
-        private void oldFileUpDown_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void folderSizeUpDown_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void logDeleteSave_Click(object sender, EventArgs e)
         {
@@ -102,26 +84,5 @@ namespace checkFileContent
 
             //this.Hide();
         }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void currentExpireDateLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        /*        protected override void OnFormClosing(FormClosingEventArgs e)
-                {
-                    base.OnFormClosing(e);
-
-                    if (e.CloseReason == CloseReason.UserClosing)
-                    {
-                        e.Cancel = true; // 폼 닫힘 취소
-                        this.Hide(); // 폼 숨기기
-                    }
-                }*/
     }
 }

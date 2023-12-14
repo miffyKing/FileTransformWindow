@@ -42,11 +42,11 @@
             this.FailureDataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.FailureDataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.FailureDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.FailureDataGridView1.Location = new System.Drawing.Point(110, 400);
+            this.FailureDataGridView1.Location = new System.Drawing.Point(54, 400);
             this.FailureDataGridView1.Name = "FailureDataGridView1";
             this.FailureDataGridView1.RowHeadersWidth = 62;
             this.FailureDataGridView1.RowTemplate.Height = 30;
-            this.FailureDataGridView1.Size = new System.Drawing.Size(688, 286);
+            this.FailureDataGridView1.Size = new System.Drawing.Size(858, 286);
             this.FailureDataGridView1.TabIndex = 1;
             // 
             // SuccessDataGridView1
@@ -55,13 +55,12 @@
             this.SuccessDataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.SuccessDataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.SuccessDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.SuccessDataGridView1.Location = new System.Drawing.Point(110, 65);
+            this.SuccessDataGridView1.Location = new System.Drawing.Point(54, 61);
             this.SuccessDataGridView1.Name = "SuccessDataGridView1";
             this.SuccessDataGridView1.RowHeadersWidth = 62;
             this.SuccessDataGridView1.RowTemplate.Height = 30;
-            this.SuccessDataGridView1.Size = new System.Drawing.Size(688, 285);
+            this.SuccessDataGridView1.Size = new System.Drawing.Size(858, 285);
             this.SuccessDataGridView1.TabIndex = 2;
-            this.SuccessDataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.SuccessDataGridView1_CellContentClick);
             // 
             // label1
             // 

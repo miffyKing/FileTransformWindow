@@ -374,7 +374,6 @@
             this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.errorLogCheck);
             this.Name = "Form1";
-            this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);

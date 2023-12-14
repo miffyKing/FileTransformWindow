@@ -43,19 +43,18 @@
             this.failureDataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.failureDataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.failureDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.failureDataGridView1.Location = new System.Drawing.Point(12, 135);
+            this.failureDataGridView1.Location = new System.Drawing.Point(12, 102);
             this.failureDataGridView1.Name = "failureDataGridView1";
             this.failureDataGridView1.RowHeadersWidth = 62;
             this.failureDataGridView1.RowTemplate.Height = 30;
             this.failureDataGridView1.Size = new System.Drawing.Size(517, 444);
             this.failureDataGridView1.TabIndex = 0;
-            this.failureDataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
             // errorLogCheck
             // 
             this.errorLogCheck.BackColor = System.Drawing.Color.LightCyan;
             this.errorLogCheck.Font = new System.Drawing.Font("굴림", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.errorLogCheck.Location = new System.Drawing.Point(100, 727);
+            this.errorLogCheck.Location = new System.Drawing.Point(39, 606);
             this.errorLogCheck.Name = "errorLogCheck";
             this.errorLogCheck.Size = new System.Drawing.Size(174, 83);
             this.errorLogCheck.TabIndex = 1;
@@ -69,13 +68,12 @@
             this.failureDataGridView2.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.failureDataGridView2.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.failureDataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.failureDataGridView2.Location = new System.Drawing.Point(576, 135);
+            this.failureDataGridView2.Location = new System.Drawing.Point(576, 102);
             this.failureDataGridView2.Name = "failureDataGridView2";
             this.failureDataGridView2.RowHeadersWidth = 62;
             this.failureDataGridView2.RowTemplate.Height = 30;
             this.failureDataGridView2.Size = new System.Drawing.Size(517, 444);
             this.failureDataGridView2.TabIndex = 2;
-            this.failureDataGridView2.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick_1);
             // 
             // failureDataGridView3
             // 
@@ -83,7 +81,7 @@
             this.failureDataGridView3.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.failureDataGridView3.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
             this.failureDataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.failureDataGridView3.Location = new System.Drawing.Point(1129, 135);
+            this.failureDataGridView3.Location = new System.Drawing.Point(1129, 102);
             this.failureDataGridView3.Name = "failureDataGridView3";
             this.failureDataGridView3.RowHeadersWidth = 62;
             this.failureDataGridView3.RowTemplate.Height = 30;
@@ -94,7 +92,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1658, 935);
+            this.ClientSize = new System.Drawing.Size(1677, 722);
             this.Controls.Add(this.failureDataGridView3);
             this.Controls.Add(this.failureDataGridView2);
             this.Controls.Add(this.errorLogCheck);
