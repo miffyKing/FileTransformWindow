@@ -68,9 +68,9 @@
             this.errorLogCheck.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.errorLogCheck.FlatAppearance.BorderSize = 5;
             this.errorLogCheck.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.errorLogCheck.Location = new System.Drawing.Point(14, 105);
+            this.errorLogCheck.Location = new System.Drawing.Point(36, 105);
             this.errorLogCheck.Name = "errorLogCheck";
-            this.errorLogCheck.Size = new System.Drawing.Size(104, 63);
+            this.errorLogCheck.Size = new System.Drawing.Size(82, 63);
             this.errorLogCheck.TabIndex = 1;
             this.errorLogCheck.Text = "오류 로그 확인";
             this.errorLogCheck.UseVisualStyleBackColor = false;
@@ -130,9 +130,9 @@
             this.DirectUpload.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("DirectUpload.BackgroundImage")));
             this.DirectUpload.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.DirectUpload.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.DirectUpload.Location = new System.Drawing.Point(14, 215);
+            this.DirectUpload.Location = new System.Drawing.Point(36, 215);
             this.DirectUpload.Name = "DirectUpload";
-            this.DirectUpload.Size = new System.Drawing.Size(104, 72);
+            this.DirectUpload.Size = new System.Drawing.Size(82, 72);
             this.DirectUpload.TabIndex = 9;
             this.DirectUpload.Text = "파일 직접 업로드";
             this.DirectUpload.UseVisualStyleBackColor = false;
@@ -175,45 +175,53 @@
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(3, 420);
             this.panel4.TabIndex = 11;
-
+            // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(96, 485);
+            this.button3.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.button3.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button3.Location = new System.Drawing.Point(47, 485);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(144, 48);
+            this.button3.Size = new System.Drawing.Size(193, 48);
             this.button3.TabIndex = 13;
             this.button3.Text = "원본 파일 저장 경로 변경";
-            this.button3.UseVisualStyleBackColor = true;
+            this.button3.UseVisualStyleBackColor = false;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(96, 541);
+            this.button4.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.button4.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button4.Location = new System.Drawing.Point(47, 541);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(144, 48);
+            this.button4.Size = new System.Drawing.Size(193, 48);
             this.button4.TabIndex = 14;
             this.button4.Text = "변환 파일 저장 경로 변경";
-            this.button4.UseVisualStyleBackColor = true;
+            this.button4.UseVisualStyleBackColor = false;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(96, 599);
+            this.button5.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.button5.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button5.Location = new System.Drawing.Point(47, 599);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(144, 48);
+            this.button5.Size = new System.Drawing.Size(193, 48);
             this.button5.TabIndex = 15;
             this.button5.Text = "파일 입력 경로 변경";
-            this.button5.UseVisualStyleBackColor = true;
+            this.button5.UseVisualStyleBackColor = false;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(96, 655);
+            this.button6.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.button6.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button6.Location = new System.Drawing.Point(47, 655);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(144, 48);
+            this.button6.Size = new System.Drawing.Size(193, 48);
             this.button6.TabIndex = 16;
             this.button6.Text = "로그 파일 저장 경로 변경";
-            this.button6.UseVisualStyleBackColor = true;
+            this.button6.UseVisualStyleBackColor = false;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // panel6
@@ -238,6 +246,7 @@
             // originalPathlabel
             // 
             this.originalPathlabel.AutoEllipsis = true;
+            this.originalPathlabel.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.originalPathlabel.Location = new System.Drawing.Point(262, 494);
             this.originalPathlabel.Name = "originalPathlabel";
             this.originalPathlabel.Size = new System.Drawing.Size(400, 28);
@@ -247,6 +256,7 @@
             // transformedPathLabel
             // 
             this.transformedPathLabel.AutoEllipsis = true;
+            this.transformedPathLabel.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.transformedPathLabel.Location = new System.Drawing.Point(262, 554);
             this.transformedPathLabel.Name = "transformedPathLabel";
             this.transformedPathLabel.Size = new System.Drawing.Size(400, 18);
@@ -256,6 +266,7 @@
             // inputPathLabel
             // 
             this.inputPathLabel.AutoEllipsis = true;
+            this.inputPathLabel.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.inputPathLabel.Location = new System.Drawing.Point(262, 614);
             this.inputPathLabel.Name = "inputPathLabel";
             this.inputPathLabel.Size = new System.Drawing.Size(400, 18);
@@ -265,6 +276,7 @@
             // logPathLabel
             // 
             this.logPathLabel.AutoEllipsis = true;
+            this.logPathLabel.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.logPathLabel.Location = new System.Drawing.Point(262, 670);
             this.logPathLabel.Name = "logPathLabel";
             this.logPathLabel.Size = new System.Drawing.Size(400, 18);
@@ -323,9 +335,9 @@
             this.openSettingButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("openSettingButton.BackgroundImage")));
             this.openSettingButton.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.openSettingButton.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.openSettingButton.Location = new System.Drawing.Point(14, 336);
+            this.openSettingButton.Location = new System.Drawing.Point(36, 336);
             this.openSettingButton.Name = "openSettingButton";
-            this.openSettingButton.Size = new System.Drawing.Size(104, 72);
+            this.openSettingButton.Size = new System.Drawing.Size(82, 72);
             this.openSettingButton.TabIndex = 30;
             this.openSettingButton.Text = "설정";
             this.openSettingButton.UseVisualStyleBackColor = false;
@@ -362,6 +374,7 @@
             this.Controls.Add(this.errorLogCheck);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
