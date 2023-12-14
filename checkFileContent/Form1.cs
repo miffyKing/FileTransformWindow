@@ -7,10 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -67,8 +64,6 @@ namespace checkFileContent
             InitializeThreadsAndLabels();       //UI 표시용 invoke
 
             InitializeFileListUpdateTimer();
-
-            
             
             //사용자가 사전 설정한 용량이 가져와진다.
 
@@ -635,8 +630,9 @@ namespace checkFileContent
             byte[] fileData = File.ReadAllBytes(file);
             string fileContent = Encoding.Unicode.GetString(fileData, 2, fileData.Length - 2);
             string[] lines = fileContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            
-            headerName = lines[0].Substring(headerPrefix.Length).Trim(); // Prefix 제거 및 공백 제거
+
+            //headerName = lines[0].Substring(headerPrefix.Length).Trim(); // Prefix 제거 및 공백 제거
+            headerName = lines[0].Substring(headerPrefix.Length); // Prefix 제거 및 공백 제거
 
 
             Console.WriteLine("header name is : " + headerName + " Filename is : " + fileName);
