@@ -17,7 +17,6 @@ namespace checkFileContent
         public string OriginalPath { get; private set; }
         public string LogPath { get; private set; }
 
-
         public FileMetaData(string filePath, string originalDir, string logDir)
         {
             FilePath = filePath;

@@ -29,7 +29,7 @@ namespace checkFileContent
         private Label[] threadLabels = new Label[3];
         private Label[] fileCountLabels = new Label[3];
         private bool isRunning = true; // 스레드 실행 제어를 위한 플래그
-        
+
         private FileProcessCount[] fileCounts = new FileProcessCount[3];
         private ConcurrentQueue<FailureInfo> failedFiles = new ConcurrentQueue<FailureInfo>();         //실패한 파일 모을 배열 -> 이걸 어떻게 표로 나타낼 수 있다면 UI 완성임.
         private ConcurrentQueue<SuccessInfo> successedFiles = new ConcurrentQueue<SuccessInfo>();
@@ -41,7 +41,7 @@ namespace checkFileContent
         private static string LOGPATH = "..\\DATAS\\log\\";
         private static string ERRORPATH = Path.Combine(LOGPATH, "errorLog");
         private static long userInputSize = 1024;
-      
+
         private SettingsUI settingsFormInit = new SettingsUI(LOGPATH, ERRORPATH);
 
         public Form1()
@@ -81,7 +81,7 @@ namespace checkFileContent
             watcher.EnableRaisingEvents = true;
         }
 
-        
+
         private void UpdatePathLabel()
         {
             originalPathlabel.Text = ORIGINALPATH;
@@ -163,8 +163,9 @@ namespace checkFileContent
 
                     try
                     {
-                        bool isDuplicated = false;
                         WriteLog(fileMetaData.LogPath, "Thread index :" + threadIndex + " Starts transrform");
+
+                        bool isDuplicated = false;
                         if (prevName != fileMetaData.FilePath)
                         {
                             isDuplicated = true;
@@ -213,19 +214,17 @@ namespace checkFileContent
 
         private void SleepTenSecond(int threadIndex)
         {
-
-                for (int i = 1; i <= 9; i++)
+            for (int i = 1; i <= 9; i++)
+            {
+                string lineToUpdate = "휴식 중 ";
+                string pointToAdd = "";
+                for (int j = 0; j < i % 4; j++)
                 {
-                    string lineToUpdate = "휴식 중 ";
-                    string pointToAdd = "";
-                    for (int j = 0; j < i % 4; j++)
-                    {
-                        pointToAdd += ".";
-                    }
-                    UpdateThreadLabel(threadIndex, lineToUpdate + pointToAdd);
-                    Thread.Sleep(1000);
-
+                    pointToAdd += ".";
                 }
+                UpdateThreadLabel(threadIndex, lineToUpdate + pointToAdd);
+                Thread.Sleep(1000);
+            }
         }
         private string CheckDupFileName(string filePath, string originalDir)
         {
@@ -290,7 +289,7 @@ namespace checkFileContent
         {
             string afterATRANSName = ExtractFileName(file.FilePath);
             string transformedFileName = "";
-            
+
             try
             {
                 if (file.Extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
@@ -321,8 +320,8 @@ namespace checkFileContent
 
         private bool checkTransformFunction(FileMetaData file, int threadIndex, bool isDuplicated)
         {
-            string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed", "Header Name no Match" };   
-           
+            string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed", "Header Name no Match" };
+
             if (checkExtension(file, threadIndex) == false)
             {
                 failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[0]));
@@ -378,7 +377,7 @@ namespace checkFileContent
 
         bool checkFileName(FileMetaData file, int threadIndex)
         {
-             //여기에서, [TargetFileName] 헤더 정확하게 확인하고, 띄어쓰기는 하나만, 반드시 하나만 있는지 확인하기.
+            //여기에서, [TargetFileName] 헤더 정확하게 확인하고, 띄어쓰기는 하나만, 반드시 하나만 있는지 확인하기.
             //또 [TargetFileName] .txt  이런거는 걸러내야하니까 유의하자.
             if (!file.FileName.StartsWith("[TargetFileName] "))
             {
@@ -486,7 +485,7 @@ namespace checkFileContent
             string headerName;
             const string fileNamePrefix = "[TargetFileName] ";
             const string headerPrefix = "[ATRANS] ";
-            
+
             fileName = fileName.Substring(fileNamePrefix.Length); // Prefix 제거
 
             string fileIndex = "";
@@ -633,7 +632,6 @@ namespace checkFileContent
                 RefreshFileListBox();
             }
         }
-
 
         private void RefreshFileListBox()
         {
@@ -835,12 +833,12 @@ namespace checkFileContent
                 folderBrowserDialog.SelectedPath = TRANSFORMEDPATH;
 
                 DialogResult result = folderBrowserDialog.ShowDialog();
-               
+
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
                     string prevTRANSFORMPATH = TRANSFORMEDPATH;
                     TRANSFORMEDPATH = folderBrowserDialog.SelectedPath;
-                    if(CheckDupPaths() == true)
+                    if (CheckDupPaths() == true)
                     {
                         MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         TRANSFORMEDPATH = prevTRANSFORMPATH;
@@ -855,7 +853,7 @@ namespace checkFileContent
             using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
             {
                 folderBrowserDialog.Description = "Select the input Folder";
-                folderBrowserDialog.SelectedPath =  INPUTROUTE;
+                folderBrowserDialog.SelectedPath = INPUTROUTE;
                 DialogResult result = folderBrowserDialog.ShowDialog();
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
@@ -888,7 +886,7 @@ namespace checkFileContent
                     string prevLOG = LOGPATH;
 
                     LOGPATH = folderBrowserDialog.SelectedPath;
-                    
+
                     if (CheckDupPaths() == true)
                     {
                         MessageBox.Show("Failed to change the folder path because a duplicate path exists.", "Path Change Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -903,7 +901,6 @@ namespace checkFileContent
 
         private void openSettingButton_Click(object sender, EventArgs e)
         {
-            
             SettingsUI settingsForm = new SettingsUI(LOGPATH, ERRORPATH);
             settingsForm.OnApplySettings += ApplyNewSettings;
             settingsForm.Show();
