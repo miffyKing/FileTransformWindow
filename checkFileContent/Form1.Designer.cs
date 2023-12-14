@@ -87,7 +87,6 @@
             this.labelStatus.Size = new System.Drawing.Size(174, 32);
             this.labelStatus.TabIndex = 2;
             this.labelStatus.Text = "상태 표시 창";
-            this.labelStatus.Click += new System.EventHandler(this.label1_Click_1);
             // 
             // firstThreadStatus
             // 
@@ -176,11 +175,7 @@
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(3, 420);
             this.panel4.TabIndex = 11;
-            // 
-            // folderBrowserDialog1
-            // 
-            this.folderBrowserDialog1.HelpRequest += new System.EventHandler(this.folderBrowserDialog1_HelpRequest);
-            // 
+
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(96, 485);
@@ -248,7 +243,6 @@
             this.originalPathlabel.Size = new System.Drawing.Size(400, 28);
             this.originalPathlabel.TabIndex = 18;
             this.originalPathlabel.Text = "label2";
-            this.originalPathlabel.Click += new System.EventHandler(this.label2_Click);
             // 
             // transformedPathLabel
             // 
@@ -258,7 +252,6 @@
             this.transformedPathLabel.Size = new System.Drawing.Size(400, 18);
             this.transformedPathLabel.TabIndex = 19;
             this.transformedPathLabel.Text = "label2";
-            this.transformedPathLabel.Click += new System.EventHandler(this.transformedPathLabel_Click);
             // 
             // inputPathLabel
             // 
@@ -369,7 +362,6 @@
             this.Controls.Add(this.errorLogCheck);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel6.ResumeLayout(false);

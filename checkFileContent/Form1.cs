@@ -266,7 +266,6 @@ namespace checkFileContent
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
                 return null;
             }
         }
@@ -288,7 +287,6 @@ namespace checkFileContent
         //-- UTF16 Version --
         private void TransformFile(string file, int threadIndex)
         {
-            Console.Write("Processing File: " + file + "\n");
             string extension = Path.GetExtension(file);
             string afterATRANSName = ExtractFileName(file);
             string transformedFileName = "";
@@ -319,7 +317,6 @@ namespace checkFileContent
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in TransformFile: " + ex.Message);
             }
         }
 
@@ -515,7 +512,6 @@ namespace checkFileContent
             string fileIndex = "";
             if (isDuplicated == true)
             {
-                Console.Write("WHY NOT COME HERE???\n");
                 // 중복 파일의 경우, 파일 이름에서 마지막 '(' 기준으로 숫자 인덱스 제거
                 int lastIndex = fileName.LastIndexOf("(");
                 if (lastIndex > 0)
@@ -707,7 +703,6 @@ namespace checkFileContent
                 GetDirectorySize(INPUTROUTE) > limit ||
                 GetDirectorySize(LOGPATH) > limit)
             {
-                //isSpaceLimitWarningShown = true; // 플래그 설정
                 fileListUpdateTimer.Stop();
                 MessageBox.Show("경고: 저장 공간 제한에 도달했습니다!", "저장 공간 경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 Application.Exit(); // 프로그램 종료
@@ -764,12 +759,7 @@ namespace checkFileContent
                 MessageBox.Show("애플리케이션이 안전하게 종료되지 못했습니다. 잠시 후 다시 시도.\n" + ex.Message, "종료 오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-        private void label1_Click(object sender, EventArgs e)
-        {
-        }
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
+
         private void errorLogCheck_Click(object sender, EventArgs e)
         {
             showErrorList newForm2 = new showErrorList(failedFiles, ERRORPATH);
@@ -789,12 +779,6 @@ namespace checkFileContent
         {
             showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 2);
             newForm2.ShowDialog();
-        }
-        private void label1_Click_1(object sender, EventArgs e)
-        {
-        }
-        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
         }
 
         private void DirectUpload_Click(object sender, EventArgs e)
@@ -835,7 +819,6 @@ namespace checkFileContent
                 {
                     if (paths[i].Equals(paths[j], StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("Duplicate path found: " + paths[i]);
                         return true;
                     }
                 }
@@ -938,20 +921,6 @@ namespace checkFileContent
                     UpdatePathLabel();
                 }
             }
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-        }
-        private void transformedPathLabel_Click(object sender, EventArgs e)
-        {
-        }
-        private void folderBrowserDialog1_HelpRequest(object sender, EventArgs e)
-        {
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
         }
 
         private void openSettingButton_Click(object sender, EventArgs e)
