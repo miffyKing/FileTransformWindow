@@ -451,13 +451,18 @@ namespace checkFileContent
                 headerName += fileIndex;
                 if (file.IsDuplicated)
                 {
+                    Console.WriteLine("여기 안들어오니?");
                     UpdateFileHeaderWithIndex(file.FilePath, fileIndex);
+                    file.UpdateFileData();
                 }
                 WriteLog(file.LogPath, "File Name Contents and Header Contents matches :" + file.FileName);
                 return true;
             }
             else
             {
+                Console.WriteLine("Target Name is |" + fileName + "|");
+                Console.WriteLine("header Name is |" + headerName + "|");
+
                 HandleFailure(file, threadIndex, "File Header & Name error - Target Name And Header MisMatch for : ");
                 return false;
             }

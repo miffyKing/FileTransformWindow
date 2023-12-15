@@ -39,6 +39,11 @@ namespace checkFileContent
             LogPath = Path.Combine(logDir, "log_" + FileName + ".txt");
         }
 
+        public void UpdateFileData()
+        {
+            FileData = File.ReadAllBytes(FilePath);
+        }
+
         private string CheckDupFileName(string filePath, string originalDir)
         {
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
