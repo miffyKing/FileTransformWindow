@@ -21,7 +21,7 @@ namespace checkFileContent
 
         public FileMetaData(string filePath, string originalDir, string logDir)
         {
-            FilePath = CheckDupFileName(filePath, originalDir); // 중복 파일 이름 검사 및 경로 업데이트
+            FilePath = CheckDupFileName(filePath, originalDir);
             if (FilePath != filePath)
             {
                 IsDuplicated = true;
@@ -34,7 +34,7 @@ namespace checkFileContent
             FileName = Path.GetFileName(FilePath);
             FileNameWithoutExtension = Path.GetFileNameWithoutExtension(FilePath);
             Extension = Path.GetExtension(FilePath);
-            FileData = File.ReadAllBytes(FilePath); // 주의: 대용량 파일의 경우 성능 저하 발생 가능
+            FileData = File.ReadAllBytes(FilePath);
             OriginalPath = Path.Combine(originalDir, FileName);
             LogPath = Path.Combine(logDir, "log_" + FileName + ".txt");
         }
@@ -53,9 +53,8 @@ namespace checkFileContent
 
             if (newFilePath != filePath)
             {
-                File.Move(filePath, newFilePath); // 파일 이름이 중복되는 경우 새 경로로 이동
+                File.Move(filePath, newFilePath);
             }
-
             return newFilePath;
         }
     }

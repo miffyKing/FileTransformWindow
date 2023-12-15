@@ -1,6 +1,6 @@
 ﻿namespace checkFileContent
 {
-    partial class showErrorList
+    partial class ShowErrorList
     {
         /// <summary>
         /// Required designer variable.

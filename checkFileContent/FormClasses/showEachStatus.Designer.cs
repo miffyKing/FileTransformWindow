@@ -1,6 +1,6 @@
 ﻿namespace checkFileContent
 {
-    partial class showEachStatus
+    partial class ShowEachStatus
     {
         /// <summary>
         /// Required designer variable.

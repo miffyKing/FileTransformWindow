@@ -22,7 +22,6 @@ namespace checkFileContent
         {
             this.logPath = log;
             this.errorPath = error;
-
             this.expireDate = settingsManager.Settings.ExpireDate;
            
             InitializeComponent();
@@ -57,17 +56,17 @@ namespace checkFileContent
         private void SettingsUI_Load(object sender, EventArgs e)
         {
             currentFolderSizeLabel.Text = $"{(settingsManager.Settings.UserInputSize / 1024)} GB";
-            currentExpireDateLabel.Text = $"{settingsManager.Settings.ExpireDate} 일"; // 수정됨
+            currentExpireDateLabel.Text = $"{settingsManager.Settings.ExpireDate} 일";
         }
 
         private void folderSizeSave_Click(object sender, EventArgs e)
         {
-            long newSize = (long)folderSizeUpDown.Value * 1024; // 선택된 값
+            long newSize = (long)folderSizeUpDown.Value * 1024;
 
             settingsManager.Settings.UserInputSize = (int)newSize;
-            settingsManager.SaveSettings();  // 수정된 부분
+            settingsManager.SaveSettings();
    
-            OnApplySettings?.Invoke(newSize); // Form1에 변경 사항 적용 요청
+            OnApplySettings?.Invoke(newSize);
             currentFolderSizeLabel.Text = $"{(settingsManager.Settings.UserInputSize / 1024)} GB";
 
             MessageBox.Show("저장되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -75,11 +74,11 @@ namespace checkFileContent
 
         private void logDeleteSave_Click(object sender, EventArgs e)
         {
-            int newExpireDate = (int)oldFileUpDown.Value; // 선택된 값
+            int newExpireDate = (int)oldFileUpDown.Value;
 
             settingsManager.Settings.ExpireDate = newExpireDate;
-            settingsManager.SaveSettings(); // 설정 저장
-            
+            settingsManager.SaveSettings();
+            currentExpireDateLabel.Text = $"{settingsManager.Settings.ExpireDate} 일";
             DeleteOldLogs();
             MessageBox.Show("저장되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

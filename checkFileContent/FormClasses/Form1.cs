@@ -54,18 +54,12 @@ namespace checkFileContent
                 fileCounts[i] = new FileProcessCount { SuccessCount = 0, FailureCount = 0 };
             }
 
-            RunGenerateFolder();                //폴더 생성
-
-            userInputSize = settingsManager.Settings.UserInputSize;  //inputSize 이전 설정값 가져옴.
-
-            InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
-
-            InitializeThreadsAndLabels();       //UI 표시용 invoke
-
+            RunGenerateFolder();
+            userInputSize = settingsManager.Settings.UserInputSize;
+            InitializeFileSystemWatcher();
+            InitializeThreadsAndLabels();
             InitializeFileListUpdateTimer();
-
-            settingsFormInit.DeleteOldLogs();                    //오래된 로그파일 지우기
-
+            settingsFormInit.DeleteOldLogs();
             UpdateStatus("파일 변환 전");
             UpdatePathLabel();
             this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);
@@ -76,7 +70,7 @@ namespace checkFileContent
             if (watcher != null)
             {
                 watcher.Dispose();
-            }   //폴더 변경했을때, 이전 폴더는 해제해주는 로직임. -> 되는지 확인해 봐야해요
+            }
             watcher = new FileSystemWatcher();
             watcher.Path = Path.GetFullPath(@INPUTROUTE);
             watcher.Filter = "*.*";
@@ -124,7 +118,7 @@ namespace checkFileContent
                 conversionThreads[i].Start();
                 UpdateFileCountLabel(threadIndex);
             }
-            progressBarOriginal.Maximum = (int)userInputSize; // 1GB, MB 단위로 표시
+            progressBarOriginal.Maximum = (int)userInputSize;
             progressBarTransformed.Maximum = (int)userInputSize;
             progressBarInput.Maximum = (int)userInputSize;
             progressBarLog.Maximum = (int)userInputSize;
@@ -133,7 +127,7 @@ namespace checkFileContent
         private void InitializeFileListUpdateTimer()
         {
             fileListUpdateTimer = new System.Windows.Forms.Timer();
-            fileListUpdateTimer.Interval = 1000; // 1초 간격
+            fileListUpdateTimer.Interval = 1000;
             fileListUpdateTimer.Tick += new EventHandler(OnFileListUpdateTimerTick);
             fileListUpdateTimer.Start();
         }
@@ -166,10 +160,10 @@ namespace checkFileContent
                         {
                             WriteLog(fileMetaData.LogPath, "Duplicate name found in original path, File Name changed.");
                         }
-                        if (checkTransformFunction(fileMetaData, threadIndex) == true)
+                        if (CheckTransformFunction(fileMetaData, threadIndex) == true)
                         {
                             fileCounts[threadIndex].SuccessCount++;
-                            UpdateFileCountLabel(threadIndex);  // 이거 변환프로세스 따라 값 바꿔야함
+                            UpdateFileCountLabel(threadIndex);
                             TransformFile(fileMetaData, threadIndex);
                             WriteLog(fileMetaData.LogPath, "Thread index :" + threadIndex + ": File Transform SUCCESS :" + fileMetaData.FileName);
                             successedFiles.Enqueue(new SuccessInfo(fileMetaData.FilePath, threadIndex));
@@ -300,35 +294,35 @@ namespace checkFileContent
             }
         }
 
-        private bool checkTransformFunction(FileMetaData file, int threadIndex)
+        private bool CheckTransformFunction(FileMetaData file, int threadIndex)
         {
             string[] errorReasons = { "Extension check Failed", "Name check Failed", "Size check Failed", "Header check Failed", "Header Name no Match" };
 
-            if (checkExtension(file, threadIndex) == false)
+            if (CheckExtension(file, threadIndex) == false)
             {
                 failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[0]));
                 return false;
             }
 
-            if (checkFileName(file, threadIndex) == false)
+            if (CheckFileName(file, threadIndex) == false)
             {
                 failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[1]));
                 return false;
             }
 
-            if (checkFileSize(file, threadIndex) == false)
+            if (CheckFileSize(file, threadIndex) == false)
             {
                 failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[2]));
                 return false;
             }
 
-            if (checkFileHeader(file, threadIndex) == false)
+            if (CheckFileHeader(file, threadIndex) == false)
             {
                 failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[3]));
                 return false;
             }
 
-            if (checkHeaderAndName(file, threadIndex) == false)
+            if (CheckHeaderAndName(file, threadIndex) == false)
             {
                 failedFiles.Enqueue(new FailureInfo(file.FilePath, threadIndex, errorReasons[4]));
                 return false;
@@ -336,7 +330,7 @@ namespace checkFileContent
             return true;
         }
 
-        bool checkExtension(FileMetaData file, int threadIndex)
+        bool CheckExtension(FileMetaData file, int threadIndex)
         {
             if (file.Extension.Equals(".bin", StringComparison.OrdinalIgnoreCase))
             {
@@ -348,32 +342,32 @@ namespace checkFileContent
             }
             else
             {
-                handleFailure(file, threadIndex, "File Extension Error - Invalid Extension for filename : ");
+                HandleFailure(file, threadIndex, "File Extension Error - Invalid Extension for filename : ");
                 return false;
             }
             return true;
         }
 
-        bool checkFileName(FileMetaData file, int threadIndex)
+        bool CheckFileName(FileMetaData file, int threadIndex)
         {
             //여기에서, [TargetFileName] 헤더 정확하게 확인하고, 띄어쓰기는 하나만, 반드시 하나만 있는지 확인하기.
             //또 [TargetFileName] .txt  이런거는 걸러내야하니까 유의하자.
             if (!file.FileName.StartsWith("[TargetFileName] "))
             {
-                handleFailure(file, threadIndex, "File Name Error - Invalid Header for filename : ");
+                HandleFailure(file, threadIndex, "File Name Error - Invalid Header for filename : ");
                 return false;
             }
             //로직 추가 - TargetFileName 으로 시작해도, 띄어쓰기가 뒤에 몇개 있는지 확인해야함.
             string trimmedFileName = file.FileName.Replace("[TargetFileName] ", "");
             if (string.IsNullOrWhiteSpace(trimmedFileName) || trimmedFileName.StartsWith(" ") || trimmedFileName.Equals(".bin") || trimmedFileName.Equals(".txt"))
             {
-                handleFailure(file, threadIndex, "File Name Error - Valid Header but other Header Issue for : ");
+                HandleFailure(file, threadIndex, "File Name Error - Valid Header but other Header Issue for : ");
                 return false;
             }
             //나중에 수정 제대로 해야함. 같은 파일이 10개 넘게 들어오면 이 로직을 통과하게 되어요.
             if (trimmedFileName[0] == '(' && trimmedFileName[2] == ')' && trimmedFileName.Length == 8)
             {
-                handleFailure(file, threadIndex, "File Name Error - Valid Header but other Header Issue for : ");
+                HandleFailure(file, threadIndex, "File Name Error - Valid Header but other Header Issue for : ");
                 return false;
             }
 
@@ -381,20 +375,20 @@ namespace checkFileContent
             return true;
         }
 
-        bool checkFileSize(FileMetaData file, int threadIndex)
+        bool CheckFileSize(FileMetaData file, int threadIndex)
         {
             FileInfo fileInfo = new FileInfo(file.FilePath);
 
             if (fileInfo.Length < 18)
             {
-                handleFailure(file, threadIndex, "file Size Error - Size Check Failed for : ");
+                HandleFailure(file, threadIndex, "file Size Error - Size Check Failed for : ");
                 return false;
             }
             WriteLog(file.LogPath, "File Size check PASSED for " + file.FileName);
             return true;
         }
 
-        bool checkFileHeader(FileMetaData file, int threadIndex)
+        bool CheckFileHeader(FileMetaData file, int threadIndex)
         {
             const string headerToCheck = "[ATRANS] ";
             try
@@ -413,13 +407,13 @@ namespace checkFileContent
 
                 if (!firstLine.StartsWith(headerToCheck))
                 {
-                    handleFailure(file, threadIndex, "File Header error - Does not start with [ATRANS] for : ");
+                    HandleFailure(file, threadIndex, "File Header error - Does not start with [ATRANS] for : ");
                     return false;
                 }
 
                 if (firstLine.Length <= headerToCheck.Length || firstLine[headerToCheck.Length] == ' ')
                 {
-                    handleFailure(file, threadIndex, "File Header error - Incorrect format after [ATRANS] for : ");
+                    HandleFailure(file, threadIndex, "File Header error - Incorrect format after [ATRANS] for : ");
                     return false;
                 }
                 WriteLog(file.LogPath, "File Header correct, it starts with [ATRANS] " + file.FileName);    //success
@@ -427,12 +421,12 @@ namespace checkFileContent
             }
             catch (Exception ex)
             {
-                handleFailure(file, threadIndex, "File Header error - Issue with File Header : " + ex.Message + "for : ");
+                HandleFailure(file, threadIndex, "File Header error - Issue with File Header : " + ex.Message + "for : ");
                 return false;
             }
         }
 
-        bool checkHeaderAndName(FileMetaData file, int threadIndex)
+        bool CheckHeaderAndName(FileMetaData file, int threadIndex)
         {
             string fileName = file.FileNameWithoutExtension;
             string headerName;
@@ -464,7 +458,7 @@ namespace checkFileContent
             }
             else
             {
-                handleFailure(file, threadIndex, "File Header & Name error - Target Name And Header MisMatch for : ");
+                HandleFailure(file, threadIndex, "File Header & Name error - Target Name And Header MisMatch for : ");
                 return false;
             }
         }
@@ -477,7 +471,7 @@ namespace checkFileContent
             }
         }
 
-        private void handleFailure(FileMetaData file, int threadIndex, string errorReason)
+        private void HandleFailure(FileMetaData file, int threadIndex, string errorReason)
         {   //실패카운터 증가, 로그 기록, 라벨 업데이트, 파일 이동
             fileCounts[threadIndex].FailureCount++;
             WriteLog(file.LogPath, errorReason + file.FileName);
@@ -688,22 +682,22 @@ namespace checkFileContent
 
         private void errorLogCheck_Click(object sender, EventArgs e)
         {
-            showErrorList newForm2 = new showErrorList(failedFiles, ERRORPATH);
+            ShowErrorList newForm2 = new ShowErrorList(failedFiles, ERRORPATH);
             newForm2.ShowDialog();
         }
         private void firstThreadButton_Click(object sender, EventArgs e)
         {
-            showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 0);
+            ShowEachStatus newForm2 = new ShowEachStatus(failedFiles, successedFiles, 0);
             newForm2.ShowDialog();
         }
         private void secondThreadButton_Click(object sender, EventArgs e)
         {
-            showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 1);
+            ShowEachStatus newForm2 = new ShowEachStatus(failedFiles, successedFiles, 1);
             newForm2.ShowDialog();
         }
         private void thirdThreadButton_Click(object sender, EventArgs e)
         {
-            showEachStatus newForm2 = new showEachStatus(failedFiles, successedFiles, 2);
+            ShowEachStatus newForm2 = new ShowEachStatus(failedFiles, successedFiles, 2);
             newForm2.ShowDialog();
         }
 
@@ -786,7 +780,7 @@ namespace checkFileContent
         private void button5_Click(object sender, EventArgs e)
         {
             SelectAndSetFolderPath(ref INPUTROUTE, "파일이 입력될 폴더를 선택하세요.");
-            InitializeFileSystemWatcher();  //변경된 폴더에서 watcher 재실행 (기존거 삭제)
+            InitializeFileSystemWatcher();
         }
 
         private void button6_Click(object sender, EventArgs e)

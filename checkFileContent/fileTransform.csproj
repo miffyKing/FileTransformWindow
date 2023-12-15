@@ -86,17 +86,17 @@
     <Compile Include="FormClasses\SettingsUI.Designer.cs">
       <DependentUpon>SettingsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormClasses\showEachStatus.cs">
+    <Compile Include="FormClasses\ShowEachStatus.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormClasses\showEachStatus.Designer.cs">
-      <DependentUpon>showEachStatus.cs</DependentUpon>
+    <Compile Include="FormClasses\ShowEachStatus.Designer.cs">
+      <DependentUpon>ShowEachStatus.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormClasses\showErrorList.cs">
+    <Compile Include="FormClasses\ShowErrorList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormClasses\showErrorList.Designer.cs">
-      <DependentUpon>showErrorList.cs</DependentUpon>
+    <Compile Include="FormClasses\ShowErrorList.Designer.cs">
+      <DependentUpon>ShowErrorList.cs</DependentUpon>
     </Compile>
     <Compile Include="NonFormClasses\SuccessInfo.cs" />
     <EmbeddedResource Include="FormClasses\Form1.resx">
@@ -114,11 +114,11 @@
     <EmbeddedResource Include="FormClasses\SettingsUI.resx">
       <DependentUpon>SettingsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormClasses\showEachStatus.resx">
-      <DependentUpon>showEachStatus.cs</DependentUpon>
+    <EmbeddedResource Include="FormClasses\ShowEachStatus.resx">
+      <DependentUpon>ShowEachStatus.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormClasses\showErrorList.resx">
-      <DependentUpon>showErrorList.cs</DependentUpon>
+    <EmbeddedResource Include="FormClasses\ShowErrorList.resx">
+      <DependentUpon>ShowErrorList.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="NonFormClasses\appsettings.json" />

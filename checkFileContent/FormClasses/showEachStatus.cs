@@ -5,12 +5,12 @@ using System.Windows.Forms;
 
 namespace checkFileContent
 {
-    public partial class showEachStatus : Form
+    public partial class ShowEachStatus : Form
     {
         private ConcurrentQueue<FailureInfo> failureQueue;
         private ConcurrentQueue<SuccessInfo> successQueue;
         private int threadIndex;
-        public showEachStatus(ConcurrentQueue<FailureInfo> failures, ConcurrentQueue<SuccessInfo> successes, int threadIdx)
+        public ShowEachStatus(ConcurrentQueue<FailureInfo> failures, ConcurrentQueue<SuccessInfo> successes, int threadIdx)
         {
             InitializeComponent();
             failureQueue = failures;
