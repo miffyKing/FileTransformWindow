@@ -1,4 +1,5 @@
-﻿using System;
+﻿using checkFileContent.NonFormClasses;
+using System;
 using System.IO;
 using System.Windows.Forms;
 
@@ -6,6 +7,9 @@ namespace checkFileContent
 {
     public partial class SettingsUI : Form
     {
+
+        private SettingsManager settingsManager = new SettingsManager();
+
         public delegate void ApplySettings(long newSize);
         public event ApplySettings OnApplySettings;
 
@@ -19,8 +23,8 @@ namespace checkFileContent
             this.logPath = log;
             this.errorPath = error;
 
-            this.expireDate = Properties.Settings.Default.ExpireDate;
-
+            this.expireDate = settingsManager.Settings.ExpireDate;
+           
             InitializeComponent();
         }
 
@@ -50,39 +54,34 @@ namespace checkFileContent
             }
         }
 
-
         private void SettingsUI_Load(object sender, EventArgs e)
         {
-            currentFolderSizeLabel.Text = $"{(Properties.Settings.Default.UserInputSize / 1024)} GB";
-            currentExpireDateLabel.Text = $"{(Properties.Settings.Default.ExpireDate)} 일";
+            currentFolderSizeLabel.Text = $"{(settingsManager.Settings.UserInputSize / 1024)} GB";
+            currentExpireDateLabel.Text = $"{settingsManager.Settings.ExpireDate} 일"; // 수정됨
         }
 
         private void folderSizeSave_Click(object sender, EventArgs e)
         {
             long newSize = (long)folderSizeUpDown.Value * 1024; // 선택된 값
 
-            Properties.Settings.Default.UserInputSize = newSize;
-            Properties.Settings.Default.Save();
-
+            settingsManager.Settings.UserInputSize = (int)newSize;
+            settingsManager.SaveSettings();  // 수정된 부분
+   
             OnApplySettings?.Invoke(newSize); // Form1에 변경 사항 적용 요청
+            currentFolderSizeLabel.Text = $"{(settingsManager.Settings.UserInputSize / 1024)} GB";
 
             MessageBox.Show("저장되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            //this.Hide();
         }
-
 
         private void logDeleteSave_Click(object sender, EventArgs e)
         {
             int newExpireDate = (int)oldFileUpDown.Value; // 선택된 값
-            //OnApplySettings?.Invoke(newSize); 
-            Properties.Settings.Default.ExpireDate = newExpireDate;
-            Properties.Settings.Default.Save();
-            this.expireDate = newExpireDate;
+
+            settingsManager.Settings.ExpireDate = newExpireDate;
+            settingsManager.SaveSettings(); // 설정 저장
+            
             DeleteOldLogs();
             MessageBox.Show("저장되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            //this.Hide();
         }
     }
 }

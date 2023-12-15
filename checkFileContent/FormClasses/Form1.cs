@@ -1,4 +1,5 @@
 ﻿
+using checkFileContent.NonFormClasses;
 using MetroFramework.Forms;     //이쁘게 보이게 하고싶습니다.
 
 using System;
@@ -13,7 +14,6 @@ using System.Windows.Forms;
 
 namespace checkFileContent
 {
-
     public partial class Form1 : MetroForm
     {
         public class FileProcessCount
@@ -40,8 +40,9 @@ namespace checkFileContent
         private static string LOGPATH = "..\\DATAS\\log\\";
         private static string ERRORPATH = Path.Combine(LOGPATH, "errorLog");
 
-        private static long userInputSize = 1024;
+        private static long userInputSize; // = 1024;
 
+        private SettingsManager settingsManager = new SettingsManager();
         private SettingsUI settingsFormInit = new SettingsUI(LOGPATH, ERRORPATH);
 
         public Form1()
@@ -55,7 +56,7 @@ namespace checkFileContent
 
             RunGenerateFolder();                //폴더 생성
 
-            userInputSize = Properties.Settings.Default.UserInputSize;  //inputSize 이전 설정값 가져옴.
+            userInputSize = settingsManager.Settings.UserInputSize;  //inputSize 이전 설정값 가져옴.
 
             InitializeFileSystemWatcher();      //fsw 생성 - 감시 시작
 
@@ -671,7 +672,6 @@ namespace checkFileContent
             try
             {
                 isRunning = false;
-
                 foreach (Thread thread in conversionThreads)
                 {
                     if (thread != null && thread.IsAlive)

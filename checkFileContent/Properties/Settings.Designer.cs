@@ -22,29 +22,5 @@ namespace checkFileContent.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("7")]
-        public int ExpireDate {
-            get {
-                return ((int)(this["ExpireDate"]));
-            }
-            set {
-                this["ExpireDate"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public long UserInputSize {
-            get {
-                return ((long)(this["UserInputSize"]));
-            }
-            set {
-                this["UserInputSize"] = value;
-            }
-        }
     }
 }
