@@ -82,7 +82,7 @@
             this.labelStatus.BackColor = System.Drawing.Color.LightSkyBlue;
             this.labelStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.labelStatus.Font = new System.Drawing.Font("현대하모니 L", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.labelStatus.Location = new System.Drawing.Point(374, 32);
+            this.labelStatus.Location = new System.Drawing.Point(414, 32);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(174, 32);
             this.labelStatus.TabIndex = 2;
@@ -94,7 +94,7 @@
             this.firstThreadStatus.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.firstThreadStatus.Location = new System.Drawing.Point(842, 130);
             this.firstThreadStatus.Name = "firstThreadStatus";
-            this.firstThreadStatus.Size = new System.Drawing.Size(141, 53);
+            this.firstThreadStatus.Size = new System.Drawing.Size(167, 53);
             this.firstThreadStatus.TabIndex = 6;
             this.firstThreadStatus.Text = "0번 스레드 현황";
             this.firstThreadStatus.UseVisualStyleBackColor = false;
@@ -106,7 +106,7 @@
             this.button1.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.button1.Location = new System.Drawing.Point(841, 236);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(141, 53);
+            this.button1.Size = new System.Drawing.Size(168, 53);
             this.button1.TabIndex = 7;
             this.button1.Text = "1번 스레드 현황";
             this.button1.UseVisualStyleBackColor = false;
@@ -118,7 +118,7 @@
             this.button2.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.button2.Location = new System.Drawing.Point(842, 346);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(141, 53);
+            this.button2.Size = new System.Drawing.Size(167, 53);
             this.button2.TabIndex = 8;
             this.button2.Text = "2번 스레드 현황";
             this.button2.UseVisualStyleBackColor = false;
@@ -247,9 +247,9 @@
             // 
             this.originalPathlabel.AutoEllipsis = true;
             this.originalPathlabel.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.originalPathlabel.Location = new System.Drawing.Point(262, 494);
+            this.originalPathlabel.Location = new System.Drawing.Point(262, 484);
             this.originalPathlabel.Name = "originalPathlabel";
-            this.originalPathlabel.Size = new System.Drawing.Size(400, 28);
+            this.originalPathlabel.Size = new System.Drawing.Size(400, 40);
             this.originalPathlabel.TabIndex = 18;
             this.originalPathlabel.Text = "label2";
             // 
@@ -257,9 +257,9 @@
             // 
             this.transformedPathLabel.AutoEllipsis = true;
             this.transformedPathLabel.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.transformedPathLabel.Location = new System.Drawing.Point(262, 554);
+            this.transformedPathLabel.Location = new System.Drawing.Point(263, 547);
             this.transformedPathLabel.Name = "transformedPathLabel";
-            this.transformedPathLabel.Size = new System.Drawing.Size(400, 18);
+            this.transformedPathLabel.Size = new System.Drawing.Size(400, 31);
             this.transformedPathLabel.TabIndex = 19;
             this.transformedPathLabel.Text = "label2";
             // 
@@ -267,9 +267,9 @@
             // 
             this.inputPathLabel.AutoEllipsis = true;
             this.inputPathLabel.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.inputPathLabel.Location = new System.Drawing.Point(262, 614);
+            this.inputPathLabel.Location = new System.Drawing.Point(262, 604);
             this.inputPathLabel.Name = "inputPathLabel";
-            this.inputPathLabel.Size = new System.Drawing.Size(400, 18);
+            this.inputPathLabel.Size = new System.Drawing.Size(400, 33);
             this.inputPathLabel.TabIndex = 20;
             this.inputPathLabel.Text = "label2";
             // 
@@ -277,9 +277,9 @@
             // 
             this.logPathLabel.AutoEllipsis = true;
             this.logPathLabel.Font = new System.Drawing.Font("현대하모니 L", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.logPathLabel.Location = new System.Drawing.Point(262, 670);
+            this.logPathLabel.Location = new System.Drawing.Point(262, 662);
             this.logPathLabel.Name = "logPathLabel";
-            this.logPathLabel.Size = new System.Drawing.Size(400, 18);
+            this.logPathLabel.Size = new System.Drawing.Size(400, 33);
             this.logPathLabel.TabIndex = 21;
             this.logPathLabel.Text = "label2";
             // 
@@ -347,7 +347,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1007, 726);
+            this.ClientSize = new System.Drawing.Size(1019, 726);
             this.Controls.Add(this.openSettingButton);
             this.Controls.Add(this.progressBarInput);
             this.Controls.Add(this.progressBarLog);
