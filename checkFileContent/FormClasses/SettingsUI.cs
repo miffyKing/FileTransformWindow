@@ -49,7 +49,6 @@ namespace checkFileContent
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error deleting old log files: {ex.Message}");
             }
         }
 
