@@ -114,7 +114,7 @@ namespace checkFileContent
                 fileCounts[i].FailureCount = 0;
 
                 int threadIndex = i;
-                conversionThreads[i] = new Thread(() => ProcessFiles(threadIndex));
+                conversionThreads[i] = new Thread(() => ProcessFiles(threadIndex)); //thread start
                 conversionThreads[i].Start();
                 UpdateFileCountLabel(threadIndex);
             }
@@ -191,7 +191,7 @@ namespace checkFileContent
                         break;
                 }
                 else
-                { // 대기 중에 중단 신호를 확인
+                {
                     if (!isRunning)
                         break;
                     Thread.Sleep(1000);
