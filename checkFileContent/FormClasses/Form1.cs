@@ -75,6 +75,8 @@ namespace checkFileContent
             watcher.Path = Path.GetFullPath(@INPUTROUTE);
             watcher.Filter = "*.*";
             watcher.Created += OnCreated;
+            watcher.Deleted += OnDeleted;
+
             watcher.EnableRaisingEvents = true;
         }
 
@@ -90,6 +92,32 @@ namespace checkFileContent
         {
             fileList.Enqueue(e.FullPath);
             UpdateStatus("파일 변환 중");
+        }
+
+        private void OnDeleted(object sender, FileSystemEventArgs e)
+        {
+            string filePathToRemove = e.FullPath;
+            RemoveFileFromQueue(filePathToRemove);
+        }
+
+        private void RemoveFileFromQueue(string filePath)
+        {
+            string item;
+            Queue<string> tmpQueue = new Queue<string>();
+
+            while (fileList.TryDequeue(out item))
+            {
+                if (item != filePath)
+                {
+                    tmpQueue.Enqueue(item);
+                }
+            }
+
+            string[] newQueue = tmpQueue.ToArray();
+            for (int i = 0; i < newQueue.Length; i++)
+            {
+                fileList.Enqueue(newQueue[i]);
+            }
         }
 
         private void InitializeThreadsAndLabels()
