@@ -90,8 +90,23 @@ namespace checkFileContent
 
         private void OnCreated(object sender, FileSystemEventArgs e)
         {
-            fileList.Enqueue(e.FullPath);
-            UpdateStatus("파일 변환 중");
+            try
+            {
+                if (File.Exists(e.FullPath))
+                {
+                    fileList.Enqueue(e.FullPath);
+                }
+                else if (Directory.Exists(e.FullPath))
+                {
+                    MessageBox.Show("폴더는 처리할 수 없습니다.", "경고", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Application.Exit();
+                }
+                UpdateStatus("파일 변환 중");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+
+            }
         }
 
         private void OnDeleted(object sender, FileSystemEventArgs e)
@@ -173,6 +188,11 @@ namespace checkFileContent
             {
                 if (fileList.TryDequeue(out string filePath))
                 {
+                    if (!WaitForIO(filePath))
+                    {
+                        continue;
+                    }
+
                     UpdateFileCountLabel(threadIndex);
                     FileMetaData fileMetaData = new FileMetaData(filePath, ORIGINALPATH, LOGPATH);
 
@@ -224,6 +244,38 @@ namespace checkFileContent
                         break;
                     Thread.Sleep(1000);
                 }
+            }
+        }
+
+        private bool WaitForIO(string filePath, int timeout = 30000)
+        {
+            const int waitDelay = 500;
+            var totalWaitTime = 0;
+
+            while (totalWaitTime < timeout)
+            {
+                if (IsFileReady(filePath))
+                {
+                    return true;
+                }
+                Thread.Sleep(waitDelay);
+                totalWaitTime += waitDelay;
+            }
+
+            return false;
+        }
+
+        private bool IsFileReady(string filePath)
+        {
+            try
+            {
+                FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
+                stream.Close();
+                return true;
+            }
+            catch (IOException)
+            {
+                return false;
             }
         }
 
