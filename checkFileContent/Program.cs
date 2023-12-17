@@ -21,7 +21,7 @@ namespace checkFileContent
                 }
                 else
                 {
-                    MessageBox.Show("이미 실행 중인 인스턴스가 있습니다.");
+                    MessageBox.Show("이미 동일 프로그램이 실행중입니다.");
                 }
             }
         }
