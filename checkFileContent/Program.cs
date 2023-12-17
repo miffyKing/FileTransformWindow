@@ -1,22 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace checkFileContent
 {
     internal static class Program
     {
-        /// <summary>
-        /// 해당 애플리케이션의 주 진입점입니다.
-        /// </summary>
+        private const string AppMutex = "##MyUniqueWinFormsAppMutexName##";
+
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            using (Mutex mutex = new Mutex(false, AppMutex, out bool createdNew))
+            {
+                if (createdNew)
+                {
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new Form1());
+                }
+                else
+                {
+                    MessageBox.Show("이미 실행 중인 인스턴스가 있습니다.");
+                }
+            }
         }
     }
 }
